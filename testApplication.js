@@ -4,7 +4,7 @@ const purposize = require('./purposize/index.js')
 const sequelize = new Sequelize('testdb', 'root', '123456', {
   host: 'localhost',
   dialect: 'mysql',
-  logging: false
+  logging: false // Prevent sequelize from logging all SQL queries
 });
 purposize.init(sequelize)
 
@@ -13,11 +13,11 @@ async function run() {
   const Customer = sequelize.define('customer', {
     eMail: {
       type: Sequelize.STRING,
-      personalData: true
+      isPersonalData: true
     },
     postalAddress: {
       type: Sequelize.STRING,
-      personalData: true
+      isPersonalData: true
     },
     unfulfilledOrders: {
       type: Sequelize.INTEGER
@@ -31,12 +31,16 @@ async function run() {
   const alice = await Customer.create({
     eMail: "alice@email.com",
     postalAddress: "1234 Shoppington"
+  }, {
+    purpose: 'ORDER'
   })
 
   console.log(alice.toJSON())
 
 }
+
 run()
+
 /*
 const purposize = require("purposize")
 purposize.init(sequelize)
