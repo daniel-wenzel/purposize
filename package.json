@@ -1,0 +1,26 @@
+{
+  "name": "purposize",
+  "version": "1.0.0",
+  "description": "Application-layer Purpose Limitation for RDBMS Systems",
+  "main": "testApplication.js",
+  "scripts": {
+    "start": "node testApplication.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniel-wenzel/purposize.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniel-wenzel/purposize/issues"
+  },
+  "homepage": "https://github.com/daniel-wenzel/purposize#readme",
+  "dependencies": {
+    "js-yaml": "^3.12.0",
+    "mysql2": "^1.5.3",
+    "sequelize": "^4.37.10"
+  }
+}
