@@ -4,6 +4,7 @@ const purposize = require('./purposize/index.js')
 const sequelize = new Sequelize('testdb', 'root', '123456', {
   host: 'localhost',
   dialect: 'mysql',
+  logging: false
 });
 purposize.init(sequelize)
 
