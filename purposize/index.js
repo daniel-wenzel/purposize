@@ -18,12 +18,13 @@ function init(sequelize) {
   const tables = initStaticTables(sequelize)
   console.log('Done!')
   Object.assign(purposizeTables, tables)
-  console.log(purposizeTables)
-  console.log('Extenting sequelize methods...')
+  // console.log(purposizeTables)
+  console.log('Extending sequelize methods...')
   extendSequelize(sequelize, purposizeTables)
   console.log('Done!')
   
   console.log('Initialization successful!')
+  console.log('######################################################')
 }
 
 async function loadPurposes(path) {
@@ -32,7 +33,7 @@ async function loadPurposes(path) {
   const purposes = yaml.safeLoad(await readFile(path, 'utf8')).purposes
 
   for (purpose of purposes) {
-    console.log(`Adding ${purpose.name} purpose to PurposeTable`)
+    console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
     await purposizeTables.purpose.upsert({
       purpose: purpose.name
     })
@@ -40,7 +41,7 @@ async function loadPurposes(path) {
 
     for (const tableName in purpose.relevantFields) {
       for (const attribute of purpose.relevantFields[tableName]) {
-        console.log(`Adding ${purpose.name} purpose entry for ${tableName}(${attribute}) into PurposeDataFieldTable`)
+        console.log(`Storing ${tableName}(${attribute}) for ${purpose.name} in PurposeDataFieldTable`)
         await purposizeTables.purposeDataFields.upsert({
           purpose: purpose.name,
           tableName: tableName,
@@ -49,7 +50,7 @@ async function loadPurposes(path) {
       }
     }
   }
-  console.log('Done! Successfully loaded purposes!')
+  console.log('Successfully loaded purposes!')
 }
 
 module.exports = {

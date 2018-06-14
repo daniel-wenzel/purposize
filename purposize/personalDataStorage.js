@@ -3,7 +3,8 @@
 let personalDataFields = []
 
 function addPersonalData(tableName, fieldName) {
-  console.log("new personal field: " + tableName, fieldName)
+  // console.log("New personal field: " + tableName, fieldName)
+  console.log(`New personal field detected: ${fieldName} in ${tableName} table`)
   personalDataFields.push({
     tableName: tableName,
     fieldName: fieldName
@@ -12,7 +13,7 @@ function addPersonalData(tableName, fieldName) {
 
 async function writePersonalDataIntoDB(personalDataFieldsTable) {
   for (personalDataField of personalDataFields) {
-    console.log("create personal data", personalDataField)
+    console.log(`Storing personal data field: ${personalDataField.fieldName} in ${personalDataField.tableName} table`)
     await personalDataFieldsTable.upsert(personalDataField)
   }
   personalDataFields = []
