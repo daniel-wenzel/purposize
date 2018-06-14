@@ -1,26 +1,10 @@
-- name: newsletter
-  storageDuration: Unlimited
-  compatibleWith:
-    - feedback_collection
-    - discount_notification
-- name: cart
-  storageDuration: 7 Days
-  compatibleWith:
-    - feedback_collection
-- name: order-processing
-  storageDuration: 30 Days
-  compatibleWith:
-    - payment_collection
-    - order_fulfillment
-    - order_cancellation
-    - feedback_collection
-- name: easy-checkout
-  storageDuration: 1 year
-  compatibleWith:
-    - order-processing
-- name: legal
-  log: true
-  compatibleWith: *
-- name: payment_collection
-  ...
-- name: marketing
+purposes:
+- name: Newsletter
+  relevantFields:
+    customers:
+      - eMail
+- name: Order
+  relevantFields:
+    customers:
+      - eMail
+      - postalAddress
