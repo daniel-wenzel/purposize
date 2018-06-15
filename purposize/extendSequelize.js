@@ -10,6 +10,7 @@ module.exports = (sequelize, purposizeTables) => {
     const tableName = arguments['0']
     const fields = arguments['1']
     let containsPersonalData = false
+    // Check if the fields contain personal data
     Object.keys(fields).forEach(fieldName => {
       const field = fields[fieldName]
       if (field.isPersonalData) {
@@ -17,9 +18,11 @@ module.exports = (sequelize, purposizeTables) => {
         containsPersonalData = true
       }
     })
+
+    // Execute original define method
     const tableDAO = originalDefine.apply(this, arguments);
 
-    // Create metadata purpose table
+    // When there is personal data, create metadata purpose table
     if (containsPersonalData) {
       const resultPurposeTable = sequelize.define(purposizeTablePrefix + tableName + "Purposes", {
         until: Sequelize.DATE
@@ -31,12 +34,18 @@ module.exports = (sequelize, purposizeTables) => {
         through: purposizeTablePrefix + tableName + "Purposes"
       });
 
+      // Store metadata table for later access
       purposizeTables.metaDataTables[tableName] = resultPurposeTable
+
+      console.log(`Extending ${tableName}DAO...`)
+      // Extend the DAO methods
+      extendTableDAO(tableDAO, resultPurposeTable, purposizeTables)
+      console.log('Done!')
     }
 
-    extendTableDAO(tableDAO)
     return tableDAO
   };
+  
   sequelize.sync = async function() {
     await originalSync.apply(this, arguments)
     await personalDataStorage.flushToDB(purposizeTables.personalDataFields)
