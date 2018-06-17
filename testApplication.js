@@ -30,12 +30,22 @@ async function run() {
   await purposize.loadPurposes('./purposes.yml')
   const alice = await Customer.create({
     eMail: "alice@email.com",
-    postalAddress: "1234 Shoppington"
+    postalAddress: "1234 Shoppington",
   }, {
     purpose: 'ORDER'
   })
 
   console.log(alice.toJSON())
+
+  const bob = await Customer.create({
+    eMail: "bob@email.com",
+    postalAddress: "1234 Buytown",
+    // age: 34
+  }, {
+    purpose: ['ORDER', 'MARKETING']
+  })
+
+  console.log(bob.toJSON())
 
 }
 
