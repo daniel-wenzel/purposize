@@ -40,7 +40,8 @@ async function run() {
     postalAddress: "1234 Buytown",
     // age: 34
   }, {
-    purpose: ['ORDER', 'MARKETING']
+    // purpose: 'ORDER'
+    purpose: ['ORDER', 'NEWSLETTER']
   })
   console.log(bob.toJSON())
 
