@@ -42,7 +42,7 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
       // 2. Store which fields are being stored for which purpose in metadata tables
       // Maybe more?
 
-      const purposes = [].concat(options.purpose) 
+      const purposes = [].concat(options.purpose)
 
       // Get all fields that are allow for the specified purpose(s)
       const purposeResult = await purposizeTables.purposeDataFields.findAll({
@@ -60,14 +60,21 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
         }
       }
 
-      // metaDataTable.create({
-      //   until: new Date(),
-      //   purposizePurposePurpose:
-      // })
-      return originalCreate.apply(this, arguments)
+      // Everything is legitimate -> Execute original define
+      const instance = await originalCreate.apply(this, arguments)
+      // Store in metadata table for which purpose data is stored
+      // TODO: Add 'until' field with date
+      await metaDataPurposeTable.bulkCreate(purposes.map( purpose => {
+        return {
+          // until: new Date(),
+          [tableDAO.tableName + 'Id']: instance.id,
+          purposizePurpose: purpose
+        }
+      }))
+      
+      return instance
     } else {
       return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
     }
   }
-
 }
