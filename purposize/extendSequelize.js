@@ -24,23 +24,25 @@ module.exports = (sequelize, purposizeTables) => {
 
     // When there is personal data, create metadata purpose table
     if (containsPersonalData) {
-      const resultPurposeTable = sequelize.define(purposizeTablePrefix + tableName + "Purposes", {
+      const metaDataPurposeTable = sequelize.define(purposizeTablePrefix + tableName + "Purposes", {
         until: Sequelize.DATE
       })
       tableDAO.belongsToMany(purposizeTables.purpose, {
-        through: purposizeTablePrefix + tableName + "Purposes"
-      });
+        through: metaDataPurposeTable,
+        foreignKey: tableName + 'Id',
+      }); 
       purposizeTables.purpose.belongsToMany(tableDAO, {
-        through: purposizeTablePrefix + tableName + "Purposes"
+        through: metaDataPurposeTable,
+        foreignKey: 'purposizePurpose',
       });
 
       // Store metadata table for later access
-      purposizeTables.metaDataTables[tableName] = resultPurposeTable
+      purposizeTables.metaDataTables[tableName] = metaDataPurposeTable  
 
-      console.log(`Extending ${tableName}DAO...`)
+      // console.log(`Extending ${tableName}DAO...`)
       // Extend the DAO methods
-      extendTableDAO(tableDAO, resultPurposeTable, purposizeTables)
-      console.log('Done!')
+      extendTableDAO(tableDAO, metaDataPurposeTable, purposizeTables)
+      // console.log('Done!')
     }
 
     return tableDAO
