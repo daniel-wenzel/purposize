@@ -1,9 +1,9 @@
 purposes:
-- name: Newsletter
+- name: NEWSLETTER
   relevantFields:
     customers:
       - eMail
-- name: Order
+- name: ORDER
   relevantFields:
     customers:
       - eMail
