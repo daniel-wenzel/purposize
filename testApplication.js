@@ -8,9 +8,8 @@ const sequelize = new Sequelize('testdb', 'root', '123456', {
 });
 purposize.init(sequelize)
 
-
 async function run() {
-  const Customer = sequelize.define('customer', {
+  const Customer = sequelize.define('customers', {
     eMail: {
       type: Sequelize.STRING,
       isPersonalData: true
@@ -34,7 +33,6 @@ async function run() {
   }, {
     purpose: 'ORDER'
   })
-
   console.log(alice.toJSON())
 
   const bob = await Customer.create({
@@ -44,8 +42,16 @@ async function run() {
   }, {
     purpose: ['ORDER', 'MARKETING']
   })
-
   console.log(bob.toJSON())
+
+  const carl = await Customer.create({
+    // eMail: "carl@email.com",
+    // postalAddress: "1234 Cheapcity",
+    unfulfilledOrders: 3
+  })
+  console.log(carl.toJSON())
+
+  
 
 }
 
