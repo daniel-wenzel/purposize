@@ -22,7 +22,7 @@ function init(sequelize) {
   // console.log('Extending sequelize methods...')
   extendSequelize(sequelize, purposizeTables)
   // console.log('Done!')
-  
+
   // console.log('Initialization successful!')
   // console.log('######################################################')
 }
@@ -34,7 +34,7 @@ async function loadPurposes(path) {
 
   for (purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
-    await purposizeTables.purpose.upsert({
+    const purposeObj = await purposizeTables.purpose.upsert({
       purpose: purpose.name
     })
 
@@ -50,6 +50,25 @@ async function loadPurposes(path) {
       }
     }
   }
+  // Set compatible relations. We do this in a second run to make sure all purposes exist in the db
+  for (purposeInfo of purposes) {
+    // if we have no compatible purposes, we dont have to add any
+    if (!purposeInfo.compatibleWith || purposeInfo.compatibleWith.length == 0) {
+      continue
+    }
+    const purposeObj = await purposizeTables.purpose.find({
+      where: {
+        purpose: purposeInfo.name
+      }
+    })
+    purposeObj.setCompatiblePurposes(purposeInfo.compatibleWith)
+    await purposeObj.save()
+  }
+  const purposeObj = await purposizeTables.purpose.find({
+    where: {
+      purpose: "FULFILLMENT"
+    }
+  })
   // console.log('Successfully loaded purposes!')
 }
 

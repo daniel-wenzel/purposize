@@ -33,7 +33,6 @@ async function run() {
   }, {
     purpose: 'ORDER'
   })
-  console.log(alice.toJSON())
 
   const bob = await Customer.create({
     eMail: "bob@email.com",
@@ -43,16 +42,23 @@ async function run() {
     // purpose: 'ORDER'
     purpose: ['ORDER', 'NEWSLETTER']
   })
-  console.log(bob.toJSON())
 
   const carl = await Customer.create({
     // eMail: "carl@email.com",
     // postalAddress: "1234 Cheapcity",
     unfulfilledOrders: 3
   })
-  console.log(carl.toJSON())
+  console.log((await Customer.findAll({
+    for: "FULFILLMENT"
+  })).map(c => {
+    return {
+      id: c.id,
+      eMail: c.eMail,
+      postalAddress: c.postalAddress
+    }
+  }))
 
-  
+
 
 }
 
