@@ -31,9 +31,13 @@ module.exports = (sequelize, purposizeTables) => {
         through: metaDataPurposeTable,
         foreignKey: tableName + 'Id',
       }); 
+      tableDAO.hasMany(metaDataPurposeTable, { 
+        as: 'attachedPurposes',
+        foreignKey: tableName + 'Id'
+      })
       purposizeTables.purpose.belongsToMany(tableDAO, {
         through: metaDataPurposeTable,
-        foreignKey: 'purposizePurpose',
+        foreignKey: 'purpose',
       });
 
       // Store metadata table for later access

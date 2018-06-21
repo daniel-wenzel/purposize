@@ -49,14 +49,8 @@ async function run() {
     unfulfilledOrders: 3
   })
   console.log((await Customer.findAll({
-    for: "FULFILLMENT"
-  })).map(c => {
-    return {
-      id: c.id,
-      eMail: c.eMail,
-      postalAddress: c.postalAddress
-    }
-  }))
+    for: "NEWSLETTER",
+  })).map(c =>c.dataValues))
 
 
 

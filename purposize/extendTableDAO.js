@@ -1,4 +1,5 @@
 const sequelize = require('sequelize')
+const Op = sequelize.Op
 
 module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
 
@@ -44,6 +45,12 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
 
       const purposes = [].concat(options.purpose)
 
+      const allPurposes = await purposizeTables.purpose.findAll().map(p => p.purpose)
+      const unknownPurpose = purposes.find( p => !allPurposes.includes(p) )
+      if (unknownPurpose !== undefined) {
+        return sequelize.Promise.reject(new Error('Unknown purpose: ' + unknownPurpose))
+      }
+
       // Get all fields that are allow for the specified purpose(s)
       const purposeResult = await purposizeTables.purposeDataFields.findAll({
         where: {
@@ -51,7 +58,7 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
           tableName: tableDAO.tableName
         }
       })
-      const allowedFields = purposeResult.map(p => p.dataValues.fieldName)
+      const allowedFields = purposeResult.map(p => p.fieldName)
       // Check if the given fields are
       for (let i = 0, len = sensitiveDataFields.length; i < len; i++) {
         const givenField = sensitiveDataFields[i]
@@ -68,7 +75,7 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
         return {
           // until: new Date(),
           [tableDAO.tableName + 'Id']: instance.id,
-          purposizePurpose: purpose
+          purpose
         }
       }))
 
@@ -81,12 +88,70 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
 
   const originalFindAll = tableDAO.findAll
   tableDAO.findAll = async function() {
-    const purposeName = arguments['0'].for
-    if (purposeName) {
-      console.log(purposeName)
-      const purpose = await purposizeTables.purpose.find({ where: { purpose: purposeName}})
-      const allPossiblePurposes = await purpose.transitiveCompatiblePurposes
+    const userQuery = arguments['0']
+    const purposeName = userQuery.for
+    console.log(purposeName)
+    // Step 1.
+    const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({
+      where: {
+        tableName: tableDAO.tableName
+      }
+    }).map( r => r.fieldName )
+
+    nonPersonalDataFields = Object.keys(tableDAO.attributes).filter(f => !allPersonalDataFields.includes(f))
+    
+    let allowedPersonalDataFields = []
+    if (typeof purposeName === 'string') {
+      allowedPersonalDataFields = await purposizeTables.purposeDataFields.findAll({
+        where: {
+          purpose: purposeName,
+          tableName: tableDAO.tableName
+        }
+      }).map( r => r.fieldName )
     }
+    const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
+
+    // Step 2.
+    // Check where clause
+    const illegalWhereField = Object.keys(userQuery.where || {}).find( f => !allAllowedFields.includes(f) )
+    if (illegalWhereField) {
+      return sequelize.Promise.reject(new Error(`Field "${illegalWhereField}" is incompatible with purpose(s): ${purposeName}`))
+    }
+
+    // Check select clause
+    const illegalSelectField = (userQuery.attributes || []).find( f => !allAllowedFields.includes(f) )
+    if (illegalSelectField) {
+      return sequelize.Promise.reject(new Error(`Field "${illegalSelectField}" is incompatible with purpose(s): ${purposeName}`))
+    }
+    
+    // Step 3.
+    if (userQuery.attributes === undefined) {
+      userQuery.attributes = allAllowedFields
+    }
+
+    // Step 4.
+    if (typeof purposeName === 'string') {
+      const purpose = await purposizeTables.purpose.find({ where: { purpose: purposeName}})
+      if (purpose === null) {
+        return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
+      }
+      const allPossiblePurposes = await purpose.transitiveCompatiblePurposes
+      userQuery.include = userQuery.include || []
+      userQuery.include.push({
+        model: metaDataPurposeTable,
+        where: {
+          purpose: {
+            [Op.or]: allPossiblePurposes.map( p => p.purpose )
+          }
+        },
+        as: 'attachedPurposes'
+      })
+    }
+    // 1. get a list of all attributes which can be accessed for purpose itself
+    // 2. check if where & select contains attributes that dont match the purpose
+    // 3. if no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
+    // 4. Add list of compatible purposes to where clause
+
     return originalFindAll.apply(this, arguments)
   }
 
