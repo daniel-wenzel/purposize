@@ -2,7 +2,7 @@ const purposizeTablePrefix = "purposize_"
 const Sequelize = require("sequelize")
 module.exports = (sequelize) => {
   const tables = {}
-  tables.purpose = sequelize.define(purposizeTablePrefix + 'purpose', {
+  tables.purpose = sequelize.define(purposizeTablePrefix + 'purposes', {
     purpose: {
       type: Sequelize.STRING,
       primaryKey: true
@@ -38,12 +38,12 @@ module.exports = (sequelize) => {
     })*/
   tables.purpose.belongsToMany(tables.purpose, {
     as: "CompatiblePurposes",
-    through: "CompatiblePurposesTable",
+    through: purposizeTablePrefix + "compatiblePurposes",
     foreignKey: 'originalPurpose'
   })
   tables.purpose.belongsToMany(tables.purpose, {
     as: "CompatiblingPurposes",
-    through: "CompatiblePurposesTable",
+    through: purposizeTablePrefix + "compatiblePurposes",
     foreignKey: 'compatiblePurpose'
   })
   tables.personalDataFields = sequelize.define(purposizeTablePrefix + 'personalDataFields', {
