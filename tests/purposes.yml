@@ -1,0 +1,23 @@
+purposes:
+- name: NEWSLETTER
+  relevantFields:
+    customers:
+      - eMail
+- name: ORDER
+  relevantFields:
+    customers:
+      - eMail
+      - postalAddress
+  compatibleWith:
+    - MONTHLY_DELIVERY
+- name: FULFILLMENT
+  relevantFields:
+    customers:
+      - postalAddress
+  compatibleWith:
+    - ORDER
+- name: MONTHLY_DELIVERY
+  relevantFields:
+    customers:
+      - eMail
+      - postalAddress

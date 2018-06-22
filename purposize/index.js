@@ -64,15 +64,11 @@ async function loadPurposes(path) {
     purposeObj.setCompatiblePurposes(purposeInfo.compatibleWith)
     await purposeObj.save()
   }
-  const purposeObj = await purposizeTables.purpose.find({
-    where: {
-      purpose: "FULFILLMENT"
-    }
-  })
   // console.log('Successfully loaded purposes!')
 }
 
 module.exports = {
   init,
-  loadPurposes
+  loadPurposes,
+  purposizeTables
 }
