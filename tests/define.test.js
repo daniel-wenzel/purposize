@@ -1,25 +1,9 @@
-const Sequelize = require('sequelize')
 const sequelize = require('./sequelize')
 const purposize = require('../purposize/index')
+const { tableName, tableDefinition, personalDataFields } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
-
-const tableName = 'customers'
-const personalDataFields = ['eMail', 'postalAddress']
-const tableDefinition = {
-  eMail: {
-    type: Sequelize.STRING,
-    isPersonalData: true
-  },
-  postalAddress: {
-    type: Sequelize.STRING,
-    isPersonalData: true
-  },
-  unfulfilledOrders: {
-    type: Sequelize.INTEGER
-  }
-}
 
 describe('Testing sequelize.define method', () => {
   before(async () => {
