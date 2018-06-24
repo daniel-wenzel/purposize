@@ -10,6 +10,10 @@ exports.tableDefinition = {
     type: Sequelize.STRING,
     isPersonalData: true
   },
+  age: {
+    type: Sequelize.INTEGER,
+    isPersonalData: true
+  },
   unfulfilledOrders: {
     type: Sequelize.INTEGER
   }
