@@ -5,7 +5,7 @@
   "main": "testApplication.js",
   "scripts": {
     "start": "node testApplication.js",
-    "test": "mocha tests -w",
+    "test": "mocha tests --watch --timeout 10000",
     "dev": "nodemon testApplication.js"
   },
   "repository": {
