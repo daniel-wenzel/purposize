@@ -16,13 +16,26 @@ describe('Testing tableDAO.create method', () => {
 
   it('Error when creating instance without purpose', async () => {
     try {
-      const alice = await Customers.create({
+      await Customers.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       })
     } catch (error) {
-      expect(error).to.not.be.undefined
+      expect(error).to.be.instanceOf(Error)
+      return
     }
+    expect.fail(null, null, 'No error was thrown')
+  })
+
+  it('Successful creation', async () => {
+    const alice = await Customers.create({
+      eMail: "alice@email.com",
+      postalAddress: "1234 Shoppington",
+      unfulfilledOrders: 1
+    }, {
+      purpose: 'ORDER'
+    })
+    expect(alice).not.to.be.undefined 
   })
 })
