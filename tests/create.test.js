@@ -1,6 +1,6 @@
 const sequelize = require('./sequelize')
 const purposize = require('../purposize/index')
-const { tableName, tableDefinition, personalDataFields } = require('./model')
+const { tableName, tableDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
@@ -9,8 +9,9 @@ const expect = chai.expect
 let Customers
 describe('Testing tableDAO.create method', () => {
   before(async () => {
+    await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
-    await sequelize.sync({ force: true })
+    await sequelize.sync()
     await purposize.loadPurposes('./purposes.yml')
   })
 

@@ -7,16 +7,13 @@ const expect = chai.expect
 
 describe('Testing sequelize.define method', () => {
   before(async () => {
+    await sequelize.getQueryInterface().dropAllTables()
     sequelize.define(tableName, tableDefinition);
-    await sequelize.sync({ force: true })
+    await sequelize.sync()
   })
 
-  it('Check for metadata tables', async () => {
+  it(`Check for ${tableName} metadata table`, async () => {
     expect(sequelize.isDefined(`purposize_${tableName}Purposes`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_personalDataFields`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_purposeDataFields`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_purposes`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_compatiblePurposes`)).to.equal(true)
   })
 
   it('Check for eMail and postalAddress in personalDataFieldsTable', async () => {
