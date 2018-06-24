@@ -11,7 +11,7 @@ describe('Testing tableDAO.create method', () => {
   before(async () => {
     Customers = sequelize.define(tableName, tableDefinition);
     await sequelize.sync({ force: true })
-    purposize.loadPurposes('./purposes.yml')
+    await purposize.loadPurposes('./purposes.yml')
   })
 
   it('Error when creating instance without purpose', async () => {
