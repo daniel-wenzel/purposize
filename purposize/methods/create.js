@@ -1,7 +1,7 @@
 const sequelize = require('sequelize')
 
 module.exports = async function(originalArgs, originalCreate, tableDAO, metaDataPurposeTable, purposizeTables) {
-  
+
   const values = originalArgs['0']
   const options = originalArgs['1']
 
@@ -66,7 +66,13 @@ module.exports = async function(originalArgs, originalCreate, tableDAO, metaData
 
     // Everything is legitimate -> Execute original define
     const instance = await originalCreate.apply(tableDAO, originalArgs)
-    // Store in metadata table for which purpose data is stored
+    for (purpose of purposes) {
+      const purposeDAO = await purposizeTables.purpose.find({ where: { purpose: purpose}})
+      await instance.addPurpose(purposeDAO)
+    }
+
+    await instance.save()
+  /*  // Store in metadata table for which purpose data is stored
     // TODO: Add 'until' field with date
     await metaDataPurposeTable.bulkCreate(purposes.map(purpose => {
       return {
@@ -74,7 +80,7 @@ module.exports = async function(originalArgs, originalCreate, tableDAO, metaData
         [tableDAO.tableName + 'Id']: instance.id,
         purpose
       }
-    }))
+    }))*/
 
     return instance
   } else {

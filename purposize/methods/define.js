@@ -26,9 +26,10 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     })
     tableDAO.belongsToMany(purposizeTables.purpose, {
       through: metaDataPurposeTable,
+      as: 'Purposes',
       foreignKey: tableName + 'Id',
-    }); 
-    tableDAO.hasMany(metaDataPurposeTable, { 
+    });
+    tableDAO.hasMany(metaDataPurposeTable, {
       as: 'attachedPurposes',
       foreignKey: tableName + 'Id'
     })
@@ -38,7 +39,7 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     });
 
     // Store metadata table for later access
-    purposizeTables.metaDataTables[tableName] = metaDataPurposeTable  
+    purposizeTables.metaDataTables[tableName] = metaDataPurposeTable
 
     // console.log(`Extending ${tableName}DAO...`)
     // Extend the DAO methods
