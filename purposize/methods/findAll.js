@@ -9,7 +9,6 @@ module.exports = async function(originalArgs, originalFindAll, tableDAO, metaDat
   
   const userQuery = originalArgs['0']
   const purposeName = userQuery.for
-  console.log(purposeName)
   // Step 1.
   const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({
     where: {
@@ -34,13 +33,21 @@ module.exports = async function(originalArgs, originalFindAll, tableDAO, metaDat
   // Check where clause
   const illegalWhereField = Object.keys(userQuery.where || {}).find( f => !allAllowedFields.includes(f) )
   if (illegalWhereField) {
-    return sequelize.Promise.reject(new Error(`Field "${illegalWhereField}" is incompatible with purpose(s): ${purposeName}`))
+    if (purposeName === undefined) {
+      return sequelize.Promise.reject(new Error(`Please specify a purpose when querying for personal data fields such as "${illegalWhereField}"`))
+    } else {
+      return sequelize.Promise.reject(new Error(`Field "${illegalWhereField}" is incompatible with purpose(s): ${purposeName}`))
+    }
   }
 
   // Check select clause
   const illegalSelectField = (userQuery.attributes || []).find( f => !allAllowedFields.includes(f) )
   if (illegalSelectField) {
-    return sequelize.Promise.reject(new Error(`Field "${illegalSelectField}" is incompatible with purpose(s): ${purposeName}`))
+    if (purposeName === undefined) {
+      return sequelize.Promise.reject(new Error(`Please specify a purpose when querying for personal data fields such as "${illegalSelectField}"`))
+    } else {
+      return sequelize.Promise.reject(new Error(`Field "${illegalSelectField}" is incompatible with purpose(s): ${purposeName}`))
+    }
   }
   
   // Step 3.
