@@ -1,7 +1,4 @@
 const personalDataStorage = require("./personalDataStorage")
-const extendTableDAO = require("./extendTableDAO")
-const purposizeTablePrefix = "purposize_"
-const Sequelize = require("sequelize")
 
 const purposizeDefine = require('./methods/define')
 

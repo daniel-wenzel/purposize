@@ -2,7 +2,7 @@
   "name": "purposize",
   "version": "1.0.0",
   "description": "Application-layer Purpose Limitation for RDBMS Systems",
-  "main": "testApplication.js",
+  "main": "index.js",
   "scripts": {
     "start": "node testApplication.js",
     "test": "mocha tests --watch --timeout 10000",
