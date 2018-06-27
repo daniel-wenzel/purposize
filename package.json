@@ -1,6 +1,6 @@
 {
   "name": "purposize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application-layer Purpose Limitation for RDBMS Systems",
   "main": "index.js",
   "scripts": {
