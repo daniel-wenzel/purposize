@@ -70,6 +70,5 @@ async function loadPurposes(path) {
 
 module.exports = {
   init,
-  loadPurposes,
-  purposizeTables
+  loadPurposes
 }
