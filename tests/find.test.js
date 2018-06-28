@@ -5,7 +5,6 @@ const { tableName, tableDefinition } = require('./model')
 const chai = require('chai')
 const expect = chai.expect
 
-
 let Customers
 describe('Testing tableDAO.find method', () => {
   before(async () => {
@@ -63,6 +62,36 @@ describe('Testing tableDAO.find method', () => {
     expect.fail(null, null, 'No error was thrown')
   })
 
+  it('Error for unknown purpose, sensitive where fields, no select fields', async () => {
+    try {
+      const result = await Customers.find({ 
+        where: {
+          eMail: "bob@email.com"
+        },
+        for: 'TEST'
+      })
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+      return
+    }
+    expect.fail(null, null, 'No error was thrown')
+  })
+
+  it('Error for invalid purpose, sensitive where fields, no select fields', async () => {
+    try {
+      const result = await Customers.find({ 
+        where: {
+          eMail: "bob@email.com"
+        },
+        for: true
+      })
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+      return
+    }
+    expect.fail(null, null, 'No error was thrown')
+  })
+
   it('Success for no purpose, unsensitive where fields, no select fields', async () => {
     const result = await Customers.find({ 
       where: {
@@ -87,10 +116,10 @@ describe('Testing tableDAO.find method', () => {
       where: {
         eMail: "bob@email.com",
       },
-      for: 'NEWSLETTER'
+      for: 'ORDER'
     })
-    expect(result.eMail).to.be.undefined
-    expect(result.postalAddress).to.be.undefined
+    expect(result.eMail).not.to.be.undefined
+    expect(result.postalAddress).not.to.be.undefined
     expect(result.unfulfilledOrders).to.be.equal(2)
   })
 

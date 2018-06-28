@@ -17,9 +17,9 @@ describe('Test purposize initialization', () => {
   })
 
   it('Check for metadata tables', async () => {
-    expect(sequelize.isDefined(`purposize_personalDataFields`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_purposeDataFields`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_purposes`)).to.equal(true)
-    expect(sequelize.isDefined(`purposize_compatiblePurposes`)).to.equal(true)
+    expect(sequelize.isDefined('purposize_personalDataFields')).to.equal(true)
+    expect(sequelize.isDefined('purposize_purposeDataFields')).to.equal(true)
+    expect(sequelize.isDefined('purposize_purposes')).to.equal(true)
+    expect(sequelize.isDefined('purposize_compatiblePurposes')).to.equal(true)
   })
 })

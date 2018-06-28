@@ -148,4 +148,11 @@ describe('Testing tableDAO.create method', () => {
     })
     expect(alice).not.to.be.undefined 
   })
+
+  it('Successful creation with no purpose and no personal data', async () => {
+    const alice = await Customers.create({
+      unfulfilledOrders: 1
+    })
+    expect(alice).not.to.be.undefined
+  })
 })
