@@ -15,7 +15,7 @@ describe('Testing sequelize.define method', () => {
     expect(sequelize.isDefined(`purposize_${tableName}Purposes`)).to.equal(true)
   })
 
-  it.only('Check for eMail and postalAddress in personalDataFieldsTable', async () => {
+  it('Check for eMail and postalAddress in personalDataFieldsTable', async () => {
     let result = await sequelize.model('purposize_personalDataFields').findAll()
     expect(result.every( (x) => {
       return x.tableName === tableName && personalDataFields.includes(x.fieldName)

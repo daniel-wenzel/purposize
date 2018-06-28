@@ -26,7 +26,7 @@ describe('Testing tableDAO.find method', () => {
       postalAddress: "1234 Buytown",
       unfulfilledOrders: 2
     }, {
-      purpose: 'ORDER'
+      purpose: ['ORDER', 'NEWSLETTER']
     })
   })
 
@@ -121,6 +121,61 @@ describe('Testing tableDAO.find method', () => {
     expect(result.eMail).not.to.be.undefined
     expect(result.postalAddress).not.to.be.undefined
     expect(result.unfulfilledOrders).to.be.equal(2)
+  })
+
+  it('Success for purpose, unsensitive where fields, sensitive select fields', async () => {
+    const result = await Customers.find({ 
+      attributes: ["eMail"],
+      where: {
+        eMail: "bob@email.com",
+      },
+      for: 'ORDER'
+    })
+    expect(result.eMail).not.to.be.undefined
+    expect(result.postalAddress).to.be.undefined
+    expect(result.unfulfilledOrders).to.be.undefined
+  })
+
+  it('Error for purpose with illegal where fields', async () => {
+    try {
+      const result = await Customers.find({ 
+        where: {
+          postalAddress: "1234 Buytown"
+        },
+        for: 'NEWSLETTER'
+      })
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+      return
+    }
+    expect.fail(null, null, 'No error was thrown')
+  })
+
+  it('Error for purpose with illegal select fields', async () => {
+    try {
+      const result = await Customers.find({ 
+        attributes: ["postalAddress"],
+        where: {
+          eMail: "bob@email.com"
+        },
+        for: 'NEWSLETTER'
+      })
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+      return
+    }
+    expect.fail(null, null, 'No error was thrown')
+  })
+
+  it('Success for purpose with limited fields', async () => {
+    const result = await Customers.find({
+      where: {
+        eMail: "bob@email.com"
+      },
+      for: 'NEWSLETTER'
+    })
+    expect(result.postalAddress).to.be.undefined
+    expect(result.unfulfilledOrders).not.to.be.undefined
   })
 
 })
