@@ -33,8 +33,10 @@ async function loadPurposes(path) {
 
   for (purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
-    const purposeObj = await purposizeTables.purpose.upsert({
-      purpose: purpose.name
+    const purposeObj = await purposizeTables.purposes.upsert({
+      purpose: purpose.name,
+      retentionPeriod: purpose.retentionPeriod,
+      loggingLevel: purpose.loggingLevel
     })
 
 
@@ -55,7 +57,7 @@ async function loadPurposes(path) {
     if (!purposeInfo.compatibleWith || purposeInfo.compatibleWith.length == 0) {
       continue
     }
-    const purposeObj = await purposizeTables.purpose.find({
+    const purposeObj = await purposizeTables.purposes.find({
       where: {
         purpose: purposeInfo.name
       }

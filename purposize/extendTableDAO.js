@@ -1,21 +1,20 @@
-const purposizeCreate = require('./methods/create')
-const purposizeFind = require('./methods/find')
+const extendTableEntries = require('./extendTableEntries')
+const purposizeFindAll = require('./methods/findAll')
 
 module.exports = (tableDAO, metaDataPurposeTable, purposizeTables) => {
 
-  const originalCreate = tableDAO.create
-  tableDAO.create = async function() {
-    return await purposizeCreate(arguments, originalCreate, tableDAO, metaDataPurposeTable, purposizeTables)
-  }
-
+  // FindAll is called by sequelize for find and findAll
   const originalFindAll = tableDAO.findAll
   tableDAO.findAll = async function() {
-    return await purposizeFind(arguments, originalFindAll, tableDAO, metaDataPurposeTable, purposizeTables)
+    return await purposizeFindAll(arguments, originalFindAll, tableDAO, metaDataPurposeTable, purposizeTables)
   }
 
-  const originalFind = tableDAO.find
-  tableDAO.find = async function() {
-    return await purposizeFind(arguments, originalFind, tableDAO, metaDataPurposeTable, purposizeTables)
+  const originalBuild = tableDAO.build
+  tableDAO.build = function() {
+    originalBuild.apply(tableDAO, arguments)
+    const result = originalBuild.apply(tableDAO, arguments)
+    extendTableEntries(result, purposizeTables)
+    return result
   }
 
 }

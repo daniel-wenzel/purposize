@@ -44,13 +44,35 @@ async function run() {
   })
 
   const carl = await Customer.create({
-    // eMail: "carl@email.com",
+    eMail: "carl@email.com",
     // postalAddress: "1234 Cheapcity",
     unfulfilledOrders: 3
+  }, {
+    purpose: 'NEWSLETTER'
   })
-  console.log((await Customer.findAll({
-    for: "NEWSLETTER",
-  })).map(c =>c.dataValues))
+
+  await carl.update({
+    postalAddress: "1234 Loltown"
+  }, {
+    purpose: 'FULFILLMENT'
+  })
+
+  // await bob.update({
+  //   eMail: 'bobby@email.bob'
+  // })
+
+  const c = await Customer.find({
+    where: { eMail: "carl@email.com" },
+    for: 'NEWSLETTER'
+  })
+
+  // console.log(c.dataValues)
+
+
+
+  // console.log((await Customer.findAll({
+  //   for: "NEWSLETTER",
+  // })).map(c =>c.dataValues))
 
 
 

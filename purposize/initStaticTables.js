@@ -2,13 +2,18 @@ const purposizeTablePrefix = "purposize_"
 const Sequelize = require("sequelize")
 module.exports = (sequelize) => {
   const tables = {}
-  tables.purpose = sequelize.define(purposizeTablePrefix + 'purposes', {
+  tables.purposes = sequelize.define(purposizeTablePrefix + 'purposes', {
     purpose: {
       type: Sequelize.STRING,
       primaryKey: true
     },
     retentionPeriod: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      defaultValue: -1
+    },
+    loggingLevel: {
+      type: Sequelize.STRING,
+      defaultValue: 'NONE'
     }
   }, {
     getterMethods: {
@@ -36,12 +41,12 @@ module.exports = (sequelize) => {
         primaryKey: true
       }
     })*/
-  tables.purpose.belongsToMany(tables.purpose, {
+  tables.purposes.belongsToMany(tables.purposes, {
     as: "CompatiblePurposes",
     through: purposizeTablePrefix + "compatiblePurposes",
     foreignKey: 'originalPurpose'
   })
-  tables.purpose.belongsToMany(tables.purpose, {
+  tables.purposes.belongsToMany(tables.purposes, {
     as: "CompatiblingPurposes",
     through: purposizeTablePrefix + "compatiblePurposes",
     foreignKey: 'compatiblePurpose'

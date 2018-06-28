@@ -1,6 +1,8 @@
 const sequelize = require('sequelize')
 const Op = sequelize.Op
 
+const extendTableEntries = require('../extendTableEntries')
+
 module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPurposeTable, purposizeTables) {
   // 1. Get a list of all attributes which can be accessed for purpose itself
   // 2. Check if where & select contains attributes that dont match the purpose
@@ -9,6 +11,19 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   
   const userQuery = originalArgs['0']
   const purposeName = userQuery.for
+
+  // Check purpose validity if given
+  let purposeInstance
+  if (typeof purposeName === 'string') {
+    purposeInstance = await purposizeTables.purposes.find({ where: { purpose: purposeName }})
+    if (purposeInstance === null) {
+      return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
+    }
+  } else if (purposeName !== undefined) {
+    // This only executes if purposeName is anything except string or undefined
+    return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
+  }
+
   // Step 1.
   const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({
     where: {
@@ -28,7 +43,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
     }).map( r => r.fieldName )
   }
   const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
-
+  
   // Step 2.
   // Check where clause
   const illegalWhereField = Object.keys(userQuery.where || {}).find( f => !allAllowedFields.includes(f) )
@@ -57,11 +72,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
 
   // Step 4.
   if (typeof purposeName === 'string') {
-    const purpose = await purposizeTables.purpose.find({ where: { purpose: purposeName}})
-    if (purpose === null) {
-      return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
-    }
-    const allPossiblePurposes = await purpose.transitiveCompatiblePurposes
+    const allPossiblePurposes = await purposeInstance.transitiveCompatiblePurposes
     userQuery.include = userQuery.include || []
     userQuery.include.push({
       model: metaDataPurposeTable,
@@ -73,5 +84,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
       as: 'attachedPurposes'
     })
   }
-  return originalFind.apply(tableDAO, originalArgs)
+
+  const tableEntries = await originalFind.apply(tableDAO, originalArgs)
+  return tableEntries
 }

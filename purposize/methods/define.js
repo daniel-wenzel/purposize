@@ -1,12 +1,15 @@
+const Sequelize = require("sequelize")
+const Op = Sequelize.Op
+
 const personalDataStorage = require("../personalDataStorage")
 const extendTableDAO = require("../extendTableDAO")
 const purposizeTablePrefix = "purposize_"
-const Sequelize = require("sequelize")
 
 module.exports = function(originalArgs, originalDefine, sequelize, purposizeTables) {
   const tableName = originalArgs['0']
   const fields = originalArgs['1']
   let containsPersonalData = false
+
   // Check if the fields contain personal data
   Object.keys(fields).forEach(fieldName => {
     const field = fields[fieldName]
@@ -24,7 +27,7 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     const metaDataPurposeTable = sequelize.define(purposizeTablePrefix + tableName + "Purposes", {
       until: Sequelize.DATE
     })
-    tableDAO.belongsToMany(purposizeTables.purpose, {
+    tableDAO.belongsToMany(purposizeTables.purposes, {
       through: metaDataPurposeTable,
       as: 'Purposes',
       foreignKey: tableName + 'Id',
@@ -33,7 +36,7 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
       as: 'attachedPurposes',
       foreignKey: tableName + 'Id'
     })
-    purposizeTables.purpose.belongsToMany(tableDAO, {
+    purposizeTables.purposes.belongsToMany(tableDAO, {
       through: metaDataPurposeTable,
       foreignKey: 'purpose',
     });
@@ -45,6 +48,30 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     // Extend the DAO methods
     extendTableDAO(tableDAO, metaDataPurposeTable, purposizeTables)
     // console.log('Done!')
+
+    // Check every 6 hours which data fields have an outdated retention period
+    // Delete all outdated purposes and the unnecessary data fields
+    setInterval(async () => {
+      const result = await tableDAO.findAll({
+        include: [
+          {
+            model: metaDataPurposeTable,
+            where: {
+              until: {
+                [Op.lt]: Date.now()
+              }
+            },
+            as: 'attachedPurposes'
+          }
+        ]
+      })
+      for (tableEntry of result) {
+        for (attachedPurpose of tableEntry.attachedPurposes) {
+          await tableEntry.removePurpose(attachedPurpose.purpose)
+        }
+      }
+    }, 6*60*60*1000) // Runs every 6 hours
+
   }
 
   return tableDAO
