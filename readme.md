@@ -48,7 +48,7 @@ Key Name | Explanation
 --- | ---
 purposes | List of all purposes
 name | Name of the purpose
-relevantFields | Specifies the data fields that are relevant to the specific purpose for each table. Make sure that the table name corresponds to your sequelize model name.
+relevantFields | Specifies the data fields that are relevant to the specific purpose for each table. Make sure that the table name corresponds to your sequelize model name and the field names correspond to your column names (data fields in your model).
 retentionPeriod | Specifies the maximum storage duration for the data fields linked to this purpose. Storage duration must be a number and is treated as days. Default is `-1` which means the data is stored infinitly.
 loggingLevel | Specifies which database interactions should be logged. Must be one of the following values: `ACCESS`, `CHANGE` or `ALL`. See logging level specification for more details. Default is `NONE`.
 
