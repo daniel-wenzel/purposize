@@ -4,15 +4,14 @@
   "description": "Application-layer Purpose Limitation for RDBMS Systems",
   "main": "purposize/index.js",
   "scripts": {
-    "start": "node testApplication.js",
-    "test": "mocha tests --watch --timeout 10000",
+    "test": "mocha tests/*.test.js --watch --timeout 10000",
     "dev": "nodemon testApplication.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/daniel-wenzel/purposize.git"
   },
-  "keywords": [],
+  "keywords": ["sequelize", "purposes", "purpose limitation", "gdpr", "purpose management", "orm", "plugin"],
   "author": "",
   "license": "ISC",
   "bugs": {
