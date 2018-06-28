@@ -2,10 +2,8 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const util = require('util');
 
-const purposizeTablePrefix = "purposize_"
 const initStaticTables = require("./initStaticTables.js")
 const extendSequelize = require("./extendSequelize.js")
-
 
 const purposizeTables = {
   metaDataTables: {}
@@ -33,7 +31,7 @@ async function loadPurposes(path) {
 
   for (purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
-    const purposeObj = await purposizeTables.purposes.upsert({
+    await purposizeTables.purposes.upsert({
       purpose: purpose.name,
       retentionPeriod: purpose.retentionPeriod,
       loggingLevel: purpose.loggingLevel
