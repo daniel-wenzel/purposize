@@ -68,19 +68,11 @@ module.exports = async function(originalArgs, originalCreate, tableDAO, metaData
     const instance = await originalCreate.apply(tableDAO, originalArgs)
     for (purpose of purposes) {
       const purposeDAO = await purposizeTables.purpose.find({ where: { purpose: purpose}})
-      await instance.addPurpose(purposeDAO)
+      const until = purposeDAO.retentionPeriod >= 0 ? Date.now() + purposeDAO.retentionPeriod*24*60*60*1000 : undefined
+      await instance.addPurpose(purposeDAO, {
+        through: { until }
+      })
     }
-
-    await instance.save()
-  /*  // Store in metadata table for which purpose data is stored
-    // TODO: Add 'until' field with date
-    await metaDataPurposeTable.bulkCreate(purposes.map(purpose => {
-      return {
-        // until: new Date(),
-        [tableDAO.tableName + 'Id']: instance.id,
-        purpose
-      }
-    }))*/
 
     return instance
   } else {
