@@ -3,7 +3,7 @@ const sequelize = require('sequelize')
 // Save handles creation of new instances and updating existing instances
 module.exports = async function(originalArgs, originalSave, tableEntry, purposizeTables) {
   const values = tableEntry.dataValues
-  const options = originalArgs['0']
+  const options = originalArgs['0'] || {}
 
   const givenFields = Object.keys(values)
   // Get all sensitive values for this table
