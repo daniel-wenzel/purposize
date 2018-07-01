@@ -1,6 +1,6 @@
 {
   "name": "purposize",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Application-layer Purpose Limitation for RDBMS Systems",
   "main": "purposize/index.js",
   "scripts": {
@@ -11,7 +11,15 @@
     "type": "git",
     "url": "git+https://github.com/daniel-wenzel/purposize.git"
   },
-  "keywords": ["sequelize", "purposes", "purpose limitation", "gdpr", "purpose management", "orm", "plugin"],
+  "keywords": [
+    "sequelize",
+    "purposes",
+    "purpose limitation",
+    "gdpr",
+    "purpose management",
+    "orm",
+    "plugin"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
