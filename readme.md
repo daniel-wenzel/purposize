@@ -6,6 +6,14 @@
 4. `npm i`
 5. `node testApplication` -->
 
+# Purposize
+
+Purposize is a [sequelize](http://docs.sequelizejs.com/) plugin to help with technically enforcing purpose limitation. 
+
+The European General Data Protection Regulation (GDPR) forces the "controller" to explicitly specify purposes for collection, processing and storing personal data. This tool is designed to technically implement the concept of purpose limitation ([GDPR Art. 5(1b)](https://gdpr-info.eu/art-5-gdpr/)) and to help with provable compliance.
+
+#### **PURPOSIZE IS STILL WORK IN PROGRESS**
+
 # Getting started
 
 1. Install purposize using `npm i purposize`
@@ -49,8 +57,9 @@ Key Name | Explanation
 purposes | List of all purposes
 name | Name of the purpose
 relevantFields | Specifies the data fields that are relevant to the specific purpose for each table. Make sure that the table name corresponds to your sequelize model name and the field names correspond to your column names (data fields in your model).
-retentionPeriod | Specifies the maximum storage duration for the data fields linked to this purpose. Storage duration must be a number and is treated as days. Default is `-1` which means the data is stored infinitly.
+retentionPeriod | Specifies the maximum storage duration for the data fields linked to this purpose. Storage duration must be a number and is treated as days. Default is `-1` which means the data is stored infinitly. <br><br> **After the retention period has expired the data will automatically be deleted!**
 loggingLevel | Specifies which database interactions should be logged. Must be one of the following values: `ACCESS`, `CHANGE` or `ALL`. See logging level specification for more details. Default is `NONE`.
+compatibleWith | Specifies all the other purposes this specific purpose is compatible with
 
 ### Logging Levels
 
