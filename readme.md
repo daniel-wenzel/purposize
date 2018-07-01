@@ -1,16 +1,8 @@
-<!-- # Getting started
-
-1. Install mysql
-2. Set user credentials to root and 123456 (or move that from the code to a config file, i like `npm i config`)
-3. Create a db called `testdb` using the command line
-4. `npm i`
-5. `node testApplication` -->
-
 # Purposize
 
 Purposize is a [sequelize](http://docs.sequelizejs.com/) plugin to help with technically enforcing purpose limitation. 
 
-The European General Data Protection Regulation (GDPR) forces the "controller" to explicitly specify purposes for collection, processing and storing personal data. This tool is designed to technically implement the concept of purpose limitation ([GDPR Art. 5(1b)](https://gdpr-info.eu/art-5-gdpr/)) and to help with provable compliance.
+The European General Data Protection Regulation ([GDPR](https://gdpr-info.eu/)) forces the "controller" to explicitly specify purposes for collecting, processing and storing personal data. This tool is designed to technically implement the concept of purpose limitation ([GDPR Art. 5(1b)](https://gdpr-info.eu/art-5-gdpr/)) and to help with provable compliance.
 
 #### **PURPOSIZE IS STILL WORK IN PROGRESS**
 
@@ -105,3 +97,19 @@ purposes:
       - postalAddress
   loggingLevel: CHANGE
 ```
+
+# Modified Methods
+
+### Sequelize Instance
+
+* sequelize.define
+* sequelize.sync
+
+### TableDAO
+
+* tableDAO.findAll
+
+### Instance
+
+* instance.save
+* instance.removePurpose
