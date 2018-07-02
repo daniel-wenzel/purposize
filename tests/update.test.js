@@ -6,7 +6,7 @@ const chai = require('chai')
 const expect = chai.expect
 
 let Customers
-describe.only('Testing instance.save method', () => {
+describe('Testing update through instance.save method', () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
