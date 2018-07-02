@@ -1,0 +1,2 @@
+1. Filter attributes that are returned by save/update so that only the attributes that match for purpose for updating are returned (current behaviour is that all attributes are returned)
+2. Allow an array of purposes for findAll method
