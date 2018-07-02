@@ -9,7 +9,23 @@ const purposizeTables = {
   metaDataTables: {}
 }
 
-function init(sequelize) {
+const defaultOptions = {
+  deletionCheckInterval: 6*60*60*1000
+}
+
+// Validates given options
+// Set invalid values back to default and log error
+function validateOptions(options) {
+  const d = options.deletionCheckInterval
+  if (d && d < 60*60*1000) {
+    console.error('\x1b[33m%s\x1b[0m', 'Invalid option: deletionCheckInterval too small! It must be at least 1 hour (3600000 ms). Default value (6 hours) was used.')
+    options.deletionCheckInterval = defaultOptions.deletionCheckInterval
+  }
+  return options
+}
+
+function init(sequelize, options = defaultOptions) {
+  options = Object.assign({ ...defaultOptions }, validateOptions(options))
   // console.log('Initializing purposize...')
   // console.log('Adding static tables...')
   const tables = initStaticTables(sequelize)
@@ -17,7 +33,7 @@ function init(sequelize) {
   Object.assign(purposizeTables, tables)
   // console.log(purposizeTables)
   // console.log('Extending sequelize methods...')
-  extendSequelize(sequelize, purposizeTables)
+  extendSequelize(sequelize, purposizeTables, options)
   // console.log('Done!')
 
   // console.log('Initialization successful!')
@@ -68,5 +84,5 @@ async function loadPurposes(path) {
 
 module.exports = {
   init,
-  loadPurposes
+  loadPurposes,
 }

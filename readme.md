@@ -123,7 +123,7 @@ Key Name | Explanation
 purposes | List of all purposes
 name | Name of the purpose
 relevantFields | Specifies the data fields that are relevant to the specific purpose for each table. Make sure that the table name corresponds to your sequelize model name and the field names correspond to your column names (data fields in your model).
-retentionPeriod | Specifies the maximum storage duration for the data fields linked to this purpose. Storage duration must be a number and is treated as days. Default is `-1` which means the data is stored infinitly. <br><br> **After the retention period has expired the data will automatically be deleted!**
+retentionPeriod | Specifies the maximum storage duration for the data fields linked to this purpose. Storage duration must be a number and is treated as days. Default is `-1` which means the data is stored infinitly. <br><br> **After the retention period has expired the personal data attributes will automatically be deleted!**
 loggingLevel | Specifies which database interactions should be logged. Must be one of the following values: `ACCESS`, `CHANGE` or `ALL`. See logging level specification for more details. Default is `NONE`.
 compatibleWith | Specifies all the other purposes this specific purpose is compatible with
 
@@ -171,6 +171,26 @@ purposes:
       - postalAddress
   loggingLevel: CHANGE
 ```
+
+# Purposize Options
+
+You can initialize purposize with some options.
+
+```javascript
+const Sequelize = require('sequelize')
+const purposize = require('purposize')
+
+const sequelize = new Sequelize(...)
+purposize.init(sequelize, {
+  deletionCheckInterval: 1*60*60*1000
+})
+```
+Available Options
+
+Option | Explanation | Default
+--- | --- | ---
+`deletionCheckInterval` | Determines how often purposize automatically checks for data instances whose retention period for a specific purpose has expired. As soon as purposize detects outdated storage purposes, the personal data attributes linked to the outdated purpose are deleted (if there is no other purpose that legitimizes the storage of the personal data attributes). <br><br> Must be given in milliseconds and must be greater than 1 hour (3600000 ms). | `21600000` (6 hours)
+
 
 # Modified Methods
 

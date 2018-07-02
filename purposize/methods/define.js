@@ -5,7 +5,7 @@ const personalDataStorage = require("../personalDataStorage")
 const extendTableDAO = require("../extendTableDAO")
 const purposizeTablePrefix = "purposize_"
 
-module.exports = function(originalArgs, originalDefine, sequelize, purposizeTables) {
+module.exports = function(originalArgs, originalDefine, sequelize, purposizeTables, options) {
   const tableName = originalArgs['0']
   const fields = originalArgs['1']
   let containsPersonalData = false
@@ -49,9 +49,10 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     extendTableDAO(tableDAO, metaDataPurposeTable, purposizeTables)
     // console.log('Done!')
 
-    // Check every 6 hours which data fields have an outdated retention period
+    // Check in a given interval (default 6 hours) which data fields have an outdated retention period
     // Delete all outdated purposes and the unnecessary data fields
     setInterval(async () => {
+      console.log('Checking for outdated purposes')
       const result = await tableDAO.findAll({
         include: [
           {
@@ -70,7 +71,7 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
           await tableEntry.removePurpose(attachedPurpose.purpose)
         }
       }
-    }, 6*60*60*1000) // Runs every 6 hours
+    }, options.deletionCheckInterval ) // Default: runs every 6 hours
 
   }
 
