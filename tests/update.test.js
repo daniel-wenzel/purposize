@@ -37,7 +37,7 @@ describe('Testing update through instance.save method', () => {
     })
   })
 
-  it('Successful update with adding new data fields', async () => {
+  it('Successful update without adding new data fields', async () => {
     const carl = await Customers.find({ 
       where: {
         postalAddress: "1234 Cheapcity"
@@ -54,7 +54,8 @@ describe('Testing update through instance.save method', () => {
     expect(oldCarlPurposes.length).to.equal(1)
 
     carl.postalAddress = "9876 Berlin"
-    await carl.save()
+    const a = await carl.save()
+    // console.log(a.dataValues)
 
     const oldCarl = await Customers.find({ 
       where: {
@@ -122,9 +123,11 @@ describe('Testing update through instance.save method', () => {
     let newCarl = await carl.save({
       purpose: 'NEWSLETTER'
     })
+
+    // Check that save method does not leak personal data
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
-    expect(newCarl.eMail).to.equal("carl@email.com")
+    expect(newCarl.eMail).to.be.undefined
 
     newCarl = await Customers.find({ 
       where: {
@@ -178,7 +181,7 @@ describe('Testing update through instance.update method', () => {
     })
   })
 
-  it('Successful update with adding new data fields', async () => {
+  it('Successful update without adding new data fields', async () => {
     const carl = await Customers.find({ 
       where: {
         postalAddress: "1234 Cheapcity"
@@ -194,9 +197,11 @@ describe('Testing update through instance.update method', () => {
     // Check that carl was only stored for the purpose FULFILLMENT
     expect(oldCarlPurposes.length).to.equal(1)
 
-    await carl.update({
+    const a = await carl.update({
       postalAddress: "9876 Berlin"
     })
+
+    // console.log(a.dataValues)
 
     const oldCarl = await Customers.find({ 
       where: {
@@ -267,9 +272,10 @@ describe('Testing update through instance.update method', () => {
       purpose: 'NEWSLETTER'
     })
 
+    // Update method should not leak personal data
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
-    expect(newCarl.eMail).to.equal("carl@email.com")
+    expect(newCarl.eMail).to.be.undefined
 
     newCarl = await Customers.find({ 
       where: {

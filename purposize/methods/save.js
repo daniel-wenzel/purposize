@@ -73,10 +73,16 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
     await instance.addPurpose(purpose)
   }
 
-  
-  // const a = await instance.constructor.findById(instance.id, { for: newPurposes[0] })
-  // console.log(a.dataValues)
-
   // TODO: Somehow filter only the values for the new allowed purpose
-  return instance
+  // return instance
+
+  // Implemented a workaround that you find the instance again but with no purpose to hide personal data
+  const whereClause = {}
+  Object.keys(instance.constructor.primaryKeys).forEach( k => whereClause[k] = instance[k] )
+  // Get clean instance by finding the instance again but with no purpose => returns only non-personal data
+  const cleanInstance = await instance.constructor.find({
+    where: whereClause
+  })
+
+  return cleanInstance
 }
