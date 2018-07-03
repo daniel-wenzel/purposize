@@ -1,9 +1,9 @@
 const sequelize = require('sequelize')
 const Op = sequelize.Op
 
-const extendTableEntries = require('../extendTableEntries')
+const log = require('../log')
 
-module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPurposeTable, purposizeTables) {
+module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPurposeTable, purposizeTables, options) {
   // 1. Get a list of all attributes which can be accessed for purpose itself
   // 2. Check if where & select contains attributes that dont match the purpose
   // 3. If no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
@@ -86,5 +86,16 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   }
 
   const tableEntries = await originalFind.apply(tableDAO, originalArgs)
+
+  const loggingTriggers = ['ACCESS', 'ALL']
+  if (
+    typeof purposeName === 'string' &&
+    tableEntries !== null &&
+    loggingTriggers.includes(purposeInstance.loggingLevel) &&
+    options.logging
+  ) {
+    log(tableEntries, purposeName, 'findAll', options.logFunction)
+  }
+
   return tableEntries
 }

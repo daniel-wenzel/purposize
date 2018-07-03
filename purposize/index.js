@@ -10,16 +10,31 @@ const purposizeTables = {
 }
 
 const defaultOptions = {
-  deletionCheckInterval: 6*60*60*1000
+  deletionCheckInterval: 6*60*60*1000,
+  logging: true,
+  logFunction: console.log
 }
 
 // Validates given options
 // Set invalid values back to default and log error
 function validateOptions(options) {
+  const logConfig = '\x1b[33m%s\x1b[0m'
   const d = options.deletionCheckInterval
   if (d && d < 60*60*1000) {
-    console.error('\x1b[33m%s\x1b[0m', 'Invalid option: deletionCheckInterval too small! It must be at least 1 hour (3600000 ms). Default value (6 hours) was used.')
+    console.error(logConfig, `Invalid option: deletionCheckInterval too small! It must be at least 1 hour (3600000 ms). Default value (6 hours, ${defaultOptions.deletionCheckInterval} ms) was used.`)
     options.deletionCheckInterval = defaultOptions.deletionCheckInterval
+  }
+
+  const l = options.logging
+  if (l && typeof l !== 'boolean') {
+    console.error(logConfig, `Invalid option: loggin must be a boolean. Default value (${defaultOptions.logging}) was used.`)
+    options.logging = defaultOptions.logging
+  }
+
+  const lf = options.logFunction
+  if (lf && typeof lf !== 'function') {
+    console.error(logConfig, `Invalid option: logFunction must be a function. Default function (console.log) was used.`)
+    options.logFunction = defaultOptions.logFunction
   }
   return options
 }

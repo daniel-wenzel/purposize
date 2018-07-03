@@ -1,4 +1,6 @@
-module.exports = async function(originalArgs, originalRemovePurpose, tableEntry, purposizeTables) {
+const log = require('../log')
+
+module.exports = async function(originalArgs, originalRemovePurpose, tableEntry, purposizeTables, options) {
   // console.log("hook works")
   // Execute original removePurpose function
   const result = await originalRemovePurpose.apply(tableEntry, originalArgs)
@@ -35,6 +37,14 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   })
   // console.log(updateStatement)
   await tableEntry.update(updateStatement)
+
+  const toBeRemovedPurpose = originalArgs['0']
+  const purposeDAO = typeof purpose === 'string' ?
+    await purposizeTables.purposes.find({ where: { purpose: toBeRemovedPurpose }}) : toBeRemovedPurpose
+  const loggingTriggers = ['CHANGE', 'ALL']
+  if (loggingTriggers.includes(purposeDAO.loggingLevel) && options.logging) {
+    log(tableEntry, purposeDAO.purpose, 'removePurpose', options.logFunction)
+  }
 
   return result
 }

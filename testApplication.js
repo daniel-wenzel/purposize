@@ -6,7 +6,9 @@ const sequelize = new Sequelize('testdb', 'root', '123456', {
   dialect: 'mysql',
   logging: false // Prevent sequelize from logging all SQL queries
 });
-purposize.init(sequelize)
+purposize.init(sequelize, {
+  logging: false
+})
 
 async function run() {
   const Customer = sequelize.define('customers', {
@@ -51,7 +53,11 @@ async function run() {
     purpose: 'NEWSLETTER'
   })
 
-  carl.addPurpose('ORDER')
+  await carl.removePurpose('NEWSLETTER')
+
+  await Customer.findAll({
+    purpose: 'FULFILLMENT'
+  })
   // await carl.addPurpose('ORDER', {
   //   through: { until }
   // })
@@ -75,7 +81,7 @@ async function run() {
 
 
   const result = await Customer.findAll({
-    for: 'ORDER'
+    purpose: 'ORDER'
   })
 
 

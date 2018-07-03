@@ -10,6 +10,8 @@ const sequelize = new Sequelize('testdb', 'root', '123456', {
   logging: false // Prevent sequelize from logging all SQL queries
 })
 
-purposize.init(sequelize)
+purposize.init(sequelize, {
+  logging: false
+})
 
 module.exports = sequelize

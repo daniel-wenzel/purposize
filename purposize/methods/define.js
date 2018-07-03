@@ -46,7 +46,7 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
 
     // console.log(`Extending ${tableName}DAO...`)
     // Extend the DAO methods
-    extendTableDAO(tableDAO, metaDataPurposeTable, purposizeTables)
+    extendTableDAO(tableDAO, metaDataPurposeTable, purposizeTables, options)
     // console.log('Done!')
 
     // Check in a given interval (default 6 hours) which data fields have an outdated retention period

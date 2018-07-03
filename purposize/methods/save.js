@@ -17,7 +17,7 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   const sensitiveDataFields = [] // Filtering the personal data fields and store them here
   for (let i = 0, len = givenFields.length; i < len; i++) {
     const givenField = givenFields[i]
-    if (personalDataFields.some(f => f === givenField)) {
+    if (personalDataFields.some(f => f === givenField) && values[givenField] !== null) {
       sensitiveDataFields.push(givenField)
     }
   }
@@ -43,8 +43,8 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   if (purposes.length == 0) {
     return sequelize.Promise.reject(new Error('Please specify a purpose when creating a new instance that contains personal data!'))
   }
-  const allPurposes = await purposizeTables.purposes.findAll().map(p => p.purpose)
-  const unknownPurpose = purposes.find( p => !allPurposes.includes(p) )
+  const allPurposes = await purposizeTables.purposes.findAll()
+  const unknownPurpose = purposes.find( p => !allPurposes.map(x => x.purpose).includes(p) )
   if (unknownPurpose !== undefined) {
     return sequelize.Promise.reject(new Error('Unknown purpose: ' + unknownPurpose))
   }
@@ -68,7 +68,7 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   // Everything is legitimate -> Execute original save
   const instance = await originalSave.apply(tableEntry, originalArgs)
 
-  // Store instance in metadatatable for every given purpose
+  // Store instance in metadatatable for every new purpose
   for (purpose of newPurposes) {
     await instance.addPurpose(purpose)
   }

@@ -47,6 +47,8 @@ The personal data fields that you want to store must match with the relevant fie
 
 When specifying only non-personal attributes the purpose field can be omitted.
 
+**The returned instance only contains non-personal attributes** <br> The reason is to prevent any data leaks. Furthermore, every access of personal data must be bound to one specific purpose!
+
 ```javascript
 const alice = await Customers.create({
   eMail: "alice@email.com",
@@ -55,6 +57,9 @@ const alice = await Customers.create({
   purpose: 'ORDER'
   // purpose: ['ORDER', 'NEWSLETTER']
 })
+
+// Keep in mind: only non-personal data is returned!
+// alice.eMail and alice.postalAddress will be undefined
 
 const bob = await Customers.create({
   unfulfilledOrders: 2
@@ -84,9 +89,11 @@ const result = await Customers.findAll({
 
 ## Updating instances
 
-When updating already existing attributes you can simply call the `save` method with no further options.
+When updating already existing attributes you can simply call the `save` or `update` method with no further options.
 
 When wanting to add a new personal data field to an instance you must again specify a purpose that legitimizes the storage. It works the same as creating an instance. You need to set the `purpose` key within the `options` object.
+
+**The returned instance only contains non-personal attributes**
 
 ```javascript
 // Adding no personal data fields
@@ -109,8 +116,13 @@ const bob = await Customers.find({
 })
 
 bob.eMail = "bob@email.com"
-await alice.save({
+await bob.save({
   purpose: 'NEWSLETTER'
+})
+
+// Updating also works through the instance.update method
+await bob.update({
+  eMail: "bobby@mail.de"
 })
 ```
 
@@ -189,7 +201,9 @@ Available Options
 
 Option | Explanation | Default
 --- | --- | ---
-`deletionCheckInterval` | Determines how often purposize automatically checks for data instances whose retention period for a specific purpose has expired. As soon as purposize detects outdated storage purposes, the personal data attributes linked to the outdated purpose are deleted (if there is no other purpose that legitimizes the storage of the personal data attributes). <br><br> Must be given in milliseconds and must be greater than 1 hour (3600000 ms). | `21600000` (6 hours)
+`deletionCheckInterval` | Determines how often purposize automatically checks for data instances whose retention period for a specific purpose has expired. As soon as purposize detects outdated storage purposes, the personal data attributes linked to the outdated purpose are deleted (if there is no other purpose that legitimizes the storage of the personal data attributes). <br><br> Must be a number given in milliseconds and must be greater than 1 hour (3600000 ms). | `21600000` (6 hours)
+`logging` | Determines if purposize creates log entries. Must be a boolean. | `true`
+`logFunction` | Custom logging function that can be provided. Receives the log string as input. Must be a function. | `console.log`
 
 
 # Modified Methods
@@ -219,7 +233,7 @@ const carl = await Customer.create({
   purpose: 'NEWSLETTER'
 })
 
-carl.addPurpose('ORDER')
+await carl.addPurpose('ORDER')
 ```
 
 * instance.removePurpose (Be careful: This method deletes unnecessary personal data fields that are not legitimized by any other purpose!)
@@ -232,5 +246,6 @@ const carl = await Customer.create({
   purpose: 'NEWSLETTER'
 })
 
-carl.addPurpose('NEWSLETTER')
+await carl.removePurpose('NEWSLETTER')
+// This will delete the eMail attribute on carl if there is no other purpose that legitimizes the storage of carl's email
 ```
