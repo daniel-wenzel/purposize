@@ -1,4 +1,5 @@
 const purposizeRemovePurpose = require('./methods/removePurpose')
+const purposizeAddPurpose = require('./methods/addPurpose')
 const purposizeSave = require('./methods/save')
 
 module.exports = (tableEntries, purposizeTables) => {
@@ -10,6 +11,13 @@ module.exports = (tableEntries, purposizeTables) => {
     if (originalRemovePurpose !== undefined) {
       tableEntry.removePurpose = async function() {
         return await purposizeRemovePurpose(arguments, originalRemovePurpose, tableEntry, purposizeTables) 
+      }
+    }
+
+    const originalAddPurpose = tableEntry.addPurpose
+    if (originalAddPurpose !== undefined) {
+      tableEntry.addPurpose = async function() {
+        return await purposizeAddPurpose(arguments, originalAddPurpose, tableEntry, purposizeTables) 
       }
     }
    

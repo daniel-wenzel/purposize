@@ -64,7 +64,7 @@ const bob = await Customers.create({
 
 ## Querying instances
 
-Querying work as usual with the exeception that you have to provide a purpose when wanting to retrieve personal data. When adding personal data fields to the `attributes` array (`SELECT` statement) or `where` object (`WHERE` statement) you must provide a purpose that legitimizes the access of those personal data fields. The purpose in queries is specified using the `for` key and must be of type `string`. 
+Querying work as usual with the exeception that you have to provide a purpose when wanting to retrieve personal data. When adding personal data fields to the `attributes` array (`SELECT` statement) or `where` object (`WHERE` statement) you must provide a purpose that legitimizes the access of those personal data fields. The purpose in queries is specified using the `purpose` key and must be of type `string`. 
 
 The returned result may contain instances that have been stored for exactly the specified purpose but also compatible purposes. Every instance only contains all non-personal attributes together with the legitimized personal attributes. All other personal attributes that are not legitimized by the specified purpose are stripped out and are not returned.
 
@@ -74,7 +74,7 @@ When no purpose is specified, the query result only contains non-personal data.
 const result = await Customers.findAll({
   attributes: [ ... ]
   where: { ... },
-  for: 'NEWSLETTER'
+  purpose: 'NEWSLETTER'
 })
 
 // Result contains instances that have been stored for the purpose NEWSLETTER or other compatible purposes.
@@ -94,7 +94,7 @@ const alice = await Customers.find({
   where: {
     eMail: "alice@email.com"
   },
-  for: 'ORDER'
+  purpose: 'ORDER'
 })
 
 alice.eMail = "alison@mail.de"
@@ -206,4 +206,31 @@ Option | Explanation | Default
 ### Instance
 
 * instance.save
-* instance.removePurpose
+
+# New Methods on Instances
+
+* instance.addPurpose
+
+```javascript
+const carl = await Customer.create({
+  eMail: "carl@email.com",
+  unfulfilledOrders: 3,
+}, {
+  purpose: 'NEWSLETTER'
+})
+
+carl.addPurpose('ORDER')
+```
+
+* instance.removePurpose (Be careful: This method deletes unnecessary personal data fields that are not legitimized by any other purpose!)
+
+```javascript
+const carl = await Customer.create({
+  eMail: "carl@email.com",
+  unfulfilledOrders: 3,
+}, {
+  purpose: 'NEWSLETTER'
+})
+
+carl.addPurpose('NEWSLETTER')
+```

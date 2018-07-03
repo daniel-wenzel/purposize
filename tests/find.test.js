@@ -68,7 +68,7 @@ describe('Testing tableDAO.find method', () => {
         where: {
           eMail: "bob@email.com"
         },
-        for: 'TEST'
+        purpose: 'TEST'
       })
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
@@ -83,7 +83,7 @@ describe('Testing tableDAO.find method', () => {
         where: {
           eMail: "bob@email.com"
         },
-        for: true
+        purpose: true
       })
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
@@ -116,7 +116,7 @@ describe('Testing tableDAO.find method', () => {
       where: {
         eMail: "bob@email.com",
       },
-      for: 'ORDER'
+      purpose: 'ORDER'
     })
     expect(result.eMail).not.to.be.undefined
     expect(result.postalAddress).not.to.be.undefined
@@ -129,7 +129,7 @@ describe('Testing tableDAO.find method', () => {
       where: {
         eMail: "bob@email.com",
       },
-      for: 'ORDER'
+      purpose: 'ORDER'
     })
     expect(result.eMail).not.to.be.undefined
     expect(result.postalAddress).to.be.undefined
@@ -142,7 +142,7 @@ describe('Testing tableDAO.find method', () => {
         where: {
           postalAddress: "1234 Buytown"
         },
-        for: 'NEWSLETTER'
+        purpose: 'NEWSLETTER'
       })
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
@@ -158,7 +158,7 @@ describe('Testing tableDAO.find method', () => {
         where: {
           eMail: "bob@email.com"
         },
-        for: 'NEWSLETTER'
+        purpose: 'NEWSLETTER'
       })
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
@@ -172,7 +172,7 @@ describe('Testing tableDAO.find method', () => {
       where: {
         eMail: "bob@email.com"
       },
-      for: 'NEWSLETTER'
+      purpose: 'NEWSLETTER'
     })
     expect(result.postalAddress).to.be.undefined
     expect(result.unfulfilledOrders).not.to.be.undefined

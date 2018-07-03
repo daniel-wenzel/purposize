@@ -10,7 +10,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // 4. Add list of compatible purposes to where clause
   
   const userQuery = originalArgs['0']
-  const purposeName = userQuery.for
+  const purposeName = userQuery.purpose
 
   // Check purpose validity if given
   let purposeInstance

@@ -70,12 +70,13 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
 
   // Store instance in metadatatable for every given purpose
   for (purpose of newPurposes) {
-    const purposeDAO = await purposizeTables.purposes.find({ where: { purpose: purpose}})
-    const until = purposeDAO.retentionPeriod >= 0 ? Date.now() + purposeDAO.retentionPeriod*24*60*60*1000 : undefined
-    await instance.addPurpose(purposeDAO, {
-      through: { until }
-    })
+    await instance.addPurpose(purpose)
   }
 
+  
+  // const a = await instance.constructor.findById(instance.id, { for: newPurposes[0] })
+  // console.log(a.dataValues)
+
+  // TODO: Somehow filter only the values for the new allowed purpose
   return instance
 }

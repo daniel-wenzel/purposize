@@ -39,7 +39,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Success for retrieval of customers with transitive purpose', async () => {
     const result = await Customers.findAll({ 
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
     expect(result.length).to.equal(3)
     result.forEach( r => {
@@ -50,7 +50,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Successful findAll without conditions', async () => {
     const result = await Customers.findAll({ 
-      for: 'ORDER'
+      purpose: 'ORDER'
     })
     expect(result.length).to.equal(2)
     result.forEach( r => {

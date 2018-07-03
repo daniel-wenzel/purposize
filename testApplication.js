@@ -46,25 +46,39 @@ async function run() {
   const carl = await Customer.create({
     eMail: "carl@email.com",
     // postalAddress: "1234 Cheapcity",
-    unfulfilledOrders: 3
+    unfulfilledOrders: 3,
   }, {
     purpose: 'NEWSLETTER'
   })
 
-  await carl.update({
-    postalAddress: "1234 Loltown"
-  }, {
-    purpose: 'FULFILLMENT'
-  })
+  carl.addPurpose('ORDER')
+  // await carl.addPurpose('ORDER', {
+  //   through: { until }
+  // })
+
+  // console.log('########################################')
+
+  // const a = await carl.update({
+  //   postalAddress: "1234 Loltown"
+  // }, {
+  //   purpose: 'FULFILLMENT'
+  // })
+
+  // carl.postalAddress = "1234 Loltown"
+  // const a = await carl.save({ purpose: 'FULFILLMENT' })
+
+  // console.log(a.dataValues)
 
   // await bob.update({
   //   eMail: 'bobby@email.bob'
   // })
 
-  const c = await Customer.find({
-    where: { eMail: "carl@email.com" },
-    for: 'NEWSLETTER'
+
+  const result = await Customer.findAll({
+    for: 'ORDER'
   })
+
+
 
   // console.log(c.dataValues)
 

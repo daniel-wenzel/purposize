@@ -6,7 +6,7 @@ const chai = require('chai')
 const expect = chai.expect
 
 let Customers
-describe.only('Testing update through instance.save method', () => {
+describe('Testing update through instance.save method', () => {
   beforeEach(async () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
@@ -42,7 +42,7 @@ describe.only('Testing update through instance.save method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
@@ -60,7 +60,7 @@ describe.only('Testing update through instance.save method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
     expect(oldCarl).to.be.null
 
@@ -68,7 +68,7 @@ describe.only('Testing update through instance.save method', () => {
       where: {
         postalAddress: "9876 Berlin"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     expect(newCarl).not.to.be.null
@@ -89,7 +89,7 @@ describe.only('Testing update through instance.save method', () => {
         where: {
           postalAddress: "1234 Cheapcity"
         },
-        for: 'FULFILLMENT'
+        purpose: 'FULFILLMENT'
       })
   
       carl.eMail = "carl@email.com"
@@ -107,7 +107,7 @@ describe.only('Testing update through instance.save method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
@@ -130,7 +130,7 @@ describe.only('Testing update through instance.save method', () => {
       where: {
         eMail: "carl@email.com"
       },
-      for: 'NEWSLETTER'
+      purpose: 'NEWSLETTER'
     })
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
@@ -147,7 +147,7 @@ describe.only('Testing update through instance.save method', () => {
   })
 })
 
-describe.only('Testing update through instance.update method', () => {
+describe('Testing update through instance.update method', () => {
   beforeEach(async () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
@@ -183,7 +183,7 @@ describe.only('Testing update through instance.update method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
@@ -202,7 +202,7 @@ describe.only('Testing update through instance.update method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
     expect(oldCarl).to.be.null
 
@@ -210,7 +210,7 @@ describe.only('Testing update through instance.update method', () => {
       where: {
         postalAddress: "9876 Berlin"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     expect(newCarl).not.to.be.null
@@ -231,7 +231,7 @@ describe.only('Testing update through instance.update method', () => {
         where: {
           postalAddress: "1234 Cheapcity"
         },
-        for: 'FULFILLMENT'
+        purpose: 'FULFILLMENT'
       })
   
       await carl.update({
@@ -250,7 +250,7 @@ describe.only('Testing update through instance.update method', () => {
       where: {
         postalAddress: "1234 Cheapcity"
       },
-      for: 'FULFILLMENT'
+      purpose: 'FULFILLMENT'
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
@@ -275,7 +275,7 @@ describe.only('Testing update through instance.update method', () => {
       where: {
         eMail: "carl@email.com"
       },
-      for: 'NEWSLETTER'
+      purpose: 'NEWSLETTER'
     })
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
