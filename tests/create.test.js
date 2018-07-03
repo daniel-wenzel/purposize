@@ -155,4 +155,18 @@ describe('Testing tableDAO.create method', () => {
     })
     expect(alice).not.to.be.undefined
   })
+
+  it('Test that creation does not leak personal data', async () => {
+    const alice = await Customers.create({
+      eMail: "alice@email.com",
+      postalAddress: "1234 Shoppington",
+      unfulfilledOrders: 1
+    }, {
+      purpose: ['FULFILLMENT', 'NEWSLETTER']
+    })
+    expect(alice).not.to.be.undefined
+    expect(alice.eMail).to.be.undefined 
+    expect(alice.postalAddress).to.be.undefined
+    expect(alice.unfulfilledOrders).not.to.be.undefined
+  })
 })
