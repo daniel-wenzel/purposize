@@ -1,0 +1,29 @@
+config: 
+  target: http://localhost:8000
+  phases: 
+    - duration: 60
+      arrivalRate: 20
+    - duration: 30
+      arrivalRate: 30
+      rampTo: 60
+    - duration: 30
+      arrivalRate: 15
+  processor: "./helpers.js"
+scenarios:
+  - name: "Create Users"
+    flow:
+      - post:
+          url: "/users"
+          beforeRequest: "createUsers"
+  - name: "Find Random Users"
+    flow:
+      - get:
+          url: "/users/{{ id }}"
+          beforeRequest: "findRandomUsers"
+  - name: "Find Random Multiple Users"
+    flow:
+      - get:
+          url: "/users"
+          beforeRequest: "findRandomMultipleUsers"
+    
+            

@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "express": "^4.16.3",
-    "purposize": "^1.0.9",
+    "purposize": "^1.0.10",
     "sequelize": "^4.38.0"
   }
 }

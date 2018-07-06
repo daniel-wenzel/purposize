@@ -10,10 +10,6 @@ const Users = sequelize.define('users', {
     type: Sequelize.STRING,
     isPersonalData: true
   },
-  age: {
-    type: Sequelize.INTEGER,
-    isPersonalData: true
-  },
   favoriteNumber: {
     type: Sequelize.INTEGER
   },
