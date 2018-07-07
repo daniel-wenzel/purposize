@@ -7,8 +7,14 @@ const sequelize = new Sequelize('benchmarkdb', 'root', '123456', {
   logging: false // Prevent sequelize from logging all SQL queries
 })
 
-// purposize.init(sequelize, {
-//   logging: false
-// })
+sequelize.purposize = true
+
+if (sequelize.purposize) {
+  console.log('Using purposize!')
+  purposize.init(sequelize, {
+    logging: false
+  })
+}
+
 
 module.exports = sequelize

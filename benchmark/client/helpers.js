@@ -1,5 +1,7 @@
 const Faker = require('faker')
 
+let currentUserId = 0
+
 exports.createUsers = function(requestParams, context, ee, next) {
   const x = Math.random()
   if (x < 0.5) {
@@ -27,11 +29,12 @@ exports.createUsers = function(requestParams, context, ee, next) {
       purpose: 'FULFILLMENT'
     }
   }
+  currentUserId++
   return next()
 }
 
 exports.findRandomUsers = function(requestParams, context, ee, next) {
-  context.vars.id = Math.floor(Math.random()*1200)
+  context.vars.id = Math.floor(Math.random()*currentUserId)
   const x = Math.random()
   if (x < 0.3) {
     requestParams.url += "?purpose=ORDER"

@@ -7,7 +7,11 @@ const startServer = async () => {
   require('./models/Users')
   await sequelize.getQueryInterface().dropAllTables()
   await sequelize.sync({ force: true })
-  // await purposize.loadPurposes('./purposes.yml')
+
+  if (sequelize.purposize) {
+    await purposize.loadPurposes('./purposes.yml')
+  }
+  
 
   // Start up the server
   const port = process.env.PORT || 8000
