@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "faker": "^4.1.0"
+    "faker": "^4.1.0",
+    "artillery": "1.6.0-22"
   }
 }
