@@ -1,4 +1,5 @@
 const sequelize = require('sequelize')
+const cachedFindAll = require("../cacheSequelizeQuery").findAll
 
 // Save handles creation of new instances and updating existing instances
 module.exports = async function(originalArgs, originalSave, tableEntry, purposizeTables) {
@@ -7,11 +8,11 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
 
   const givenFields = Object.keys(values)
   // Get all sensitive values for this table
-  let personalDataFields = await purposizeTables.personalDataFields.findAll({
+  let personalDataFields = (await cachedFindAll(purposizeTables.personalDataFields, {
     where: {
       tableName: tableEntry.constructor.tableName
     }
-  }).map(r => r.fieldName)
+  })).map(r => r.fieldName)
 
   // Check if the given data fields contain personal data
   const sensitiveDataFields = [] // Filtering the personal data fields and store them here
@@ -32,30 +33,30 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   let newPurposes = []
 
   if (typeof options.purpose === 'string' || Array.isArray(options.purpose)) {
-    // This is only executed when a new instance is created or 
+    // This is only executed when a new instance is created or
     // an existing instance is updated but is given new additional purposes
     newPurposes = newPurposes.concat(options.purpose)
   } else if (options.purpose !== undefined) {
     return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
   }
-  
+
   const purposes = oldPurposes.concat(newPurposes) // all purposes for this given instance
   if (purposes.length == 0) {
     return sequelize.Promise.reject(new Error('Please specify a purpose when creating a new instance that contains personal data!'))
   }
-  const allPurposes = await purposizeTables.purposes.findAll()
+  const allPurposes = await cachedFindAll(purposizeTables.purposes, {})
   const unknownPurpose = purposes.find( p => !allPurposes.map(x => x.purpose).includes(p) )
   if (unknownPurpose !== undefined) {
     return sequelize.Promise.reject(new Error('Unknown purpose: ' + unknownPurpose))
   }
 
   // Get all fields that are allow for the specified purpose(s)
-  const allowedFields = await purposizeTables.purposeDataFields.findAll({
+  const allowedFields = (await cachedFindAll(purposizeTables.purposeDataFields, {
     where: {
       purpose: purposes,
       tableName: tableEntry.constructor.tableName
     }
-  }).map(p => p.fieldName)
+  })).map(p => p.fieldName)
 
   // Check if the given fields are allowed
   for (let i = 0, len = sensitiveDataFields.length; i < len; i++) {

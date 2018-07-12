@@ -12,7 +12,7 @@ describe('Testing update through instance.save method', () => {
     Customers = sequelize.define(tableName, tableDefinition);
     await sequelize.sync()
     await purposize.loadPurposes('./purposes.yml')
-    
+
     const alice = await Customers.create({
       eMail: "alice@email.com",
       postalAddress: "1234 Shoppington",
@@ -38,7 +38,7 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.find({ 
+    const carl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -46,7 +46,7 @@ describe('Testing update through instance.save method', () => {
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -57,7 +57,7 @@ describe('Testing update through instance.save method', () => {
     const a = await carl.save()
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.find({ 
+    const oldCarl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -65,7 +65,7 @@ describe('Testing update through instance.save method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.find({ 
+    const newCarl = await Customers.find({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -76,7 +76,7 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.postalAddress).to.equal("9876 Berlin")
 
     const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -86,13 +86,13 @@ describe('Testing update through instance.save method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.find({ 
+      const carl = await Customers.find({
         where: {
           postalAddress: "1234 Cheapcity"
         },
         purpose: 'FULFILLMENT'
       })
-  
+
       carl.eMail = "carl@email.com"
       await carl.save()
 
@@ -104,7 +104,7 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.find({ 
+    const carl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -112,7 +112,7 @@ describe('Testing update through instance.save method', () => {
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -129,7 +129,7 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.find({ 
+    newCarl = await Customers.find({
       where: {
         eMail: "carl@email.com"
       },
@@ -140,7 +140,7 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.eMail).to.equal("carl@email.com")
 
     const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: newCarl.id
       }
     })
@@ -156,7 +156,7 @@ describe('Testing update through instance.update method', () => {
     Customers = sequelize.define(tableName, tableDefinition);
     await sequelize.sync()
     await purposize.loadPurposes('./purposes.yml')
-    
+
     const alice = await Customers.create({
       eMail: "alice@email.com",
       postalAddress: "1234 Shoppington",
@@ -182,7 +182,7 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.find({ 
+    const carl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -190,7 +190,7 @@ describe('Testing update through instance.update method', () => {
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -203,7 +203,7 @@ describe('Testing update through instance.update method', () => {
 
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.find({ 
+    const oldCarl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -211,7 +211,7 @@ describe('Testing update through instance.update method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.find({ 
+    const newCarl = await Customers.find({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -222,7 +222,7 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.postalAddress).to.equal("9876 Berlin")
 
     const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -232,13 +232,13 @@ describe('Testing update through instance.update method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.find({ 
+      const carl = await Customers.find({
         where: {
           postalAddress: "1234 Cheapcity"
         },
         purpose: 'FULFILLMENT'
       })
-  
+
       await carl.update({
         eMail: "carl@email.com"
       })
@@ -251,7 +251,7 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.find({ 
+    const carl = await Customers.find({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -259,7 +259,7 @@ describe('Testing update through instance.update method', () => {
     })
 
     const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: carl.id
       }
     })
@@ -277,7 +277,7 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.find({ 
+    newCarl = await Customers.find({
       where: {
         eMail: "carl@email.com"
       },
@@ -288,7 +288,7 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.eMail).to.equal("carl@email.com")
 
     const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
-      where: { 
+      where: {
         customersId: newCarl.id
       }
     })

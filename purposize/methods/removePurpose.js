@@ -1,4 +1,5 @@
 const log = require('../log')
+const cachedFindAll = require("../cacheSequelizeQuery").findAll
 
 module.exports = async function(originalArgs, originalRemovePurpose, tableEntry, purposizeTables, options) {
   // console.log("hook works")
@@ -6,7 +7,7 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   const result = await originalRemovePurpose.apply(tableEntry, originalArgs)
 
   // Get all sensitive values for this table
-  let personalDataFields = await purposizeTables.personalDataFields.findAll({
+  let personalDataFields = await cachedFindAll(purposizeTables.personalDataFields, {
     where: {
       tableName: tableEntry.constructor.tableName
     }
@@ -19,7 +20,8 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   // console.log(remainingPurposes)
 
   // Get all fields that are allow for the remaining purposes
-  const purposeResult = await purposizeTables.purposeDataFields.findAll({
+  // TODO: add cache
+  const purposeResult = await cachedFindAll(purposizeTables.purposeDataFields, {
     where: {
       purpose: remainingPurposes,
       tableName: tableEntry.constructor.tableName
@@ -39,8 +41,9 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   await tableEntry.update(updateStatement)
 
   const toBeRemovedPurpose = originalArgs['0']
+  //TODO add cache
   const purposeDAO = typeof purpose === 'string' ?
-    await purposizeTables.purposes.find({ where: { purpose: toBeRemovedPurpose }}) : toBeRemovedPurpose
+    await cachedFindAll(purposizeTables.purposes, { where: { purpose: toBeRemovedPurpose }}, {single: true}) : toBeRemovedPurpose
   const loggingTriggers = ['CHANGE', 'ALL']
   if (loggingTriggers.includes(purposeDAO.loggingLevel) && options.logging) {
     log(tableEntry, purposeDAO.purpose, 'removePurpose', options.logFunction)

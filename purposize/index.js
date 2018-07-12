@@ -4,6 +4,8 @@ const util = require('util');
 
 const initStaticTables = require("./initStaticTables.js")
 const extendSequelize = require("./extendSequelize.js")
+const flushCache = require("./cacheSequelizeQuery").flush
+const cache = require("./cacheSequelizeQuery")
 
 const purposizeTables = {
   metaDataTables: {}
@@ -12,7 +14,8 @@ const purposizeTables = {
 const defaultOptions = {
   deletionCheckInterval: 6*60*60*1000,
   logging: true,
-  logFunction: console.log
+  logFunction: console.log,
+  cacheEnabled: true
 }
 
 // Validates given options
@@ -41,6 +44,7 @@ function validateOptions(options) {
 
 function init(sequelize, options = defaultOptions) {
   options = Object.assign({ ...defaultOptions }, validateOptions(options))
+  cache.setEnabled(options.cacheEnabled)
   // console.log('Initializing purposize...')
   // console.log('Adding static tables...')
   const tables = initStaticTables(sequelize)
@@ -59,7 +63,7 @@ async function loadPurposes(path) {
   // console.log('Loading purposes...')
   const readFile = util.promisify(fs.readFile)
   const purposes = yaml.safeLoad(await readFile(path, 'utf8')).purposes
-
+  flushCache()
   for (purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
     await purposizeTables.purposes.upsert({

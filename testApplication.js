@@ -58,6 +58,10 @@ async function run() {
   await Customer.findAll({
     purpose: 'FULFILLMENT'
   })
+
+  await Customer.findAll({
+    purpose: 'FULFILLMENT'
+  })
   // await carl.addPurpose('ORDER', {
   //   through: { until }
   // })
