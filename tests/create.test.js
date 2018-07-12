@@ -169,4 +169,25 @@ describe('Testing tableDAO.create method', () => {
     expect(alice.postalAddress).to.be.undefined
     expect(alice.unfulfilledOrders).not.to.be.undefined
   })
+
+  it('Test metadata table includes entry', async () => {
+    const alice = await Customers.create({
+      eMail: "alice@email.com",
+      postalAddress: "1234 Shoppington",
+      unfulfilledOrders: 1
+    }, {
+      purpose: ['FULFILLMENT', 'NEWSLETTER']
+    })
+
+    const metaDataTable = sequelize.model(`purposize_${tableName}Purposes`)
+    const metaDataEntries = await metaDataTable.findAll({
+      where: {
+        [tableName + 'Id']: alice.id
+      }
+    })
+
+    expect(metaDataEntries.length).to.equal(2)
+    expect(metaDataEntries.find( e => e.purpose = 'FULFILLMENT')).not.to.be.undefined
+    expect(metaDataEntries.find( e => e.purpose = 'NEWSLETTER')).not.to.be.undefined
+  })
 })
