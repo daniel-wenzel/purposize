@@ -74,9 +74,18 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
     await instance.addPurpose(purpose)
   }
 
-  // TODO: Somehow filter only the values for the new allowed purpose
-  // return instance
+  // Filter all personal data values to prevent any data leakage
+  const allPersonalDataFields = (await cachedFindAll(purposizeTables.personalDataFields, { where: {
+    tableName: instance.constructor.tableName
+  }})).map( r => r.fieldName )
 
+  allPersonalDataFields.forEach( f => { 
+    if (instance[f]) delete instance.dataValues[f] 
+  })
+
+  return instance
+
+  /*
   // Implemented a workaround that you find the instance again but with no purpose to hide personal data
   const whereClause = {}
   Object.keys(instance.constructor.primaryKeys).forEach( k => whereClause[k] = instance[k] )
@@ -86,4 +95,5 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   })
 
   return cleanInstance
+  */
 }
