@@ -11,7 +11,6 @@ module.exports = (tableDAO, metaDataPurposeTable, purposizeTables, options) => {
 
   const originalBuild = tableDAO.build
   tableDAO.build = function() {
-    originalBuild.apply(tableDAO, arguments)
     const result = originalBuild.apply(tableDAO, arguments)
     extendTableEntries(result, purposizeTables, options)
     return result
