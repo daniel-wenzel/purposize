@@ -39,3 +39,4 @@ typings/
 
 ignore
 *.ppk
+.vscode
