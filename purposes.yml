@@ -9,12 +9,8 @@ purposes:
     customers:
       - eMail
       - postalAddress
-  retentionPeriod: 60 # period in days; if nothing is specified, data is stored "forever"
-  # ACCESS -> select query
-  # CHANGE -> adding/removing of purpose
-  # ALL
-  # if no level specified, nothing is logged (NONE)
-  loggingLevel: ACCESS
+  retentionPeriod: 60
+  loggingLevel: ALL
   compatibleWith:
     - MONTHLY_DELIVERY
 - name: FULFILLMENT
