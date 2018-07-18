@@ -1,9 +1,15 @@
+const sequelize = require('sequelize')
 const log = require('../log')
 const cachedFindAll = require("../cacheSequelizeQuery").findAll
 
 module.exports = async function(originalArgs, originalRemovePurpose, tableEntry, purposizeTables, options) {
   // console.log("hook works")
   // Execute original removePurpose function
+  const toBeRemovedPurpose = originalArgs['0']
+  if (typeof toBeRemovedPurpose !== 'string' || toBeRemovedPurpose === '') {
+    return sequelize.Promise.reject(new Error(`Please specify a purpose string`))
+  }
+
   const result = await originalRemovePurpose.apply(tableEntry, originalArgs)
 
   // Get all sensitive values for this table
@@ -16,7 +22,7 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   // console.log(personalDataFields)
 
   // Remaining purposes that are stored for this instance after purpose removal in the beginning
-  const remainingPurposes = await tableEntry.getPurposes().map(p => p.purpose)
+  const remainingPurposes = (await tableEntry.getPurposes()).map(p => p.purpose)
   // console.log(remainingPurposes)
 
   // Get all fields that are allow for the remaining purposes
@@ -40,10 +46,11 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   // console.log(updateStatement)
   await tableEntry.update(updateStatement)
 
-  const toBeRemovedPurpose = originalArgs['0']
-  //TODO add cache
   const purposeDAO = typeof purpose === 'string' ?
     await cachedFindAll(purposizeTables.purposes, { where: { purpose: toBeRemovedPurpose }}, {single: true}) : toBeRemovedPurpose
+  if (purposeDAO === null) {
+    return sequelize.Promise.reject(new Error(`Unknown purpose: ${toBeRemovedPurpose}`))
+  }
   const loggingTriggers = ['CHANGE', 'ALL']
   if (loggingTriggers.includes(purposeDAO.loggingLevel) && options.logging) {
     log(tableEntry, purposeDAO.purpose, 'removePurpose', options.logFunction)

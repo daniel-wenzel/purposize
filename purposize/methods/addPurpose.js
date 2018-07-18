@@ -1,9 +1,19 @@
+const sequelize = require('sequelize')
 const log = require('../log')
 const cachedFindAll = require("../cacheSequelizeQuery").findAll
 module.exports = async function(originalArgs, originalAddPurpose, tableEntry, purposizeTables, options) {
   const purpose = originalArgs['0']
+
+  if (typeof purpose !== 'string' || purpose === '') {
+    return sequelize.Promise.reject(new Error(`Please specify a purpose string`))
+  }
+
   const purposeDAO = typeof purpose === 'string' ?
     await cachedFindAll(purposizeTables.purposes,{ where: { purpose: purpose }}, {single: true}) : purpose
+
+  if (purposeDAO === null) {
+    return sequelize.Promise.reject(new Error(`Unknown purpose: ${purpose}`))
+  }
 
   const until = purposeDAO.retentionPeriod >= 0 ? Date.now() + purposeDAO.retentionPeriod*24*60*60*1000 : undefined
 
