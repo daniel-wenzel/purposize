@@ -8,11 +8,11 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
 
   const givenFields = Object.keys(values)
   // Get all sensitive values for this table
-  let personalDataFields = (await cachedFindAll(purposizeTables.personalDataFields, {
+  let personalDataFields = await cachedFindAll(purposizeTables.personalDataFields, {
     where: {
       tableName: tableEntry.constructor.tableName
     }
-  })).map(r => r.fieldName)
+  }).map(r => r.fieldName)
 
   // Check if the given data fields contain personal data
   const sensitiveDataFields = [] // Filtering the personal data fields and store them here

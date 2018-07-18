@@ -10,7 +10,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // 3. If no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
   // 4. Add list of compatible purposes to where clause
 
-  const userQuery = originalArgs['0']
+  const userQuery = originalArgs['0'] || {}
   const purposeName = userQuery.purpose
 
   // Check purpose validity if given
