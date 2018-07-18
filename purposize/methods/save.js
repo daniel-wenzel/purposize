@@ -12,13 +12,14 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
     where: {
       tableName: tableEntry.constructor.tableName
     }
-  }).map(r => r.fieldName)
+  })
 
   // Check if the given data fields contain personal data
   const sensitiveDataFields = [] // Filtering the personal data fields and store them here
   for (let i = 0, len = givenFields.length; i < len; i++) {
     const givenField = givenFields[i]
-    if (personalDataFields.some(f => f === givenField) && values[givenField] !== null) {
+    const isSensitive = personalDataFields.map(r => r.fieldName).some(f => f === givenField)
+    if (isSensitive && values[givenField] !== null) {
       sensitiveDataFields.push(givenField)
     }
   }
