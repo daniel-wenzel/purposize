@@ -97,7 +97,7 @@ When wanting to add a new personal data field to an instance you must again spec
 
 ```javascript
 // Adding no personal data fields
-const alice = await Customers.find({ 
+const alice = await Customers.findOne({ 
   where: {
     eMail: "alice@email.com"
   },
@@ -109,7 +109,7 @@ alice.postalAddress = "9876 Cheapcity"
 await alice.save()
 
 // Adding new personal data fields
-const bob = await Customers.find({ 
+const bob = await Customers.findOne({ 
   where: {
     unfulfilledOrders: 2
   }

@@ -6,7 +6,7 @@ const chai = require('chai')
 const expect = chai.expect
 
 let Customers
-describe('Testing tableDAO.find method', () => {
+describe('Testing tableDAO.findOne method', () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
@@ -31,14 +31,14 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for no purpose, no where and no select fields', async () => {
-    const result = await Customers.find({})
+    const result = await Customers.findOne({})
     expect(result.eMail).to.be.undefined
     expect(result.postalAddress).to.be.undefined
   })
 
   it('Error for no purpose, sensitive where fields, no select fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         where: {
           eMail: "bob@email.com"
         }
@@ -52,7 +52,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Error for no purpose, no where fields, sensitive select fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         attributes: ["eMail"]
       })
     } catch (error) {
@@ -64,7 +64,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Error for unknown purpose, sensitive where fields, no select fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         where: {
           eMail: "bob@email.com"
         },
@@ -79,7 +79,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Error for invalid purpose, sensitive where fields, no select fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         where: {
           eMail: "bob@email.com"
         },
@@ -93,7 +93,7 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for no purpose, unsensitive where fields, no select fields', async () => {
-    const result = await Customers.find({ 
+    const result = await Customers.findOne({ 
       where: {
         unfulfilledOrders: 2
       }
@@ -104,7 +104,7 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for no purpose, no where fields, sensitive select fields', async () => {
-    const result = await Customers.find({ 
+    const result = await Customers.findOne({ 
       attributes: ["unfulfilledOrders"]
     })
     expect(result.eMail).to.be.undefined
@@ -112,7 +112,7 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for purpose, unsensitive where fields, no select fields', async () => {
-    const result = await Customers.find({ 
+    const result = await Customers.findOne({ 
       where: {
         eMail: "bob@email.com",
       },
@@ -124,7 +124,7 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for purpose, unsensitive where fields, sensitive select fields', async () => {
-    const result = await Customers.find({ 
+    const result = await Customers.findOne({ 
       attributes: ["eMail"],
       where: {
         eMail: "bob@email.com",
@@ -138,7 +138,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Error for purpose with illegal where fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         where: {
           postalAddress: "1234 Buytown"
         },
@@ -153,7 +153,7 @@ describe('Testing tableDAO.find method', () => {
 
   it('Error for purpose with illegal select fields', async () => {
     try {
-      const result = await Customers.find({ 
+      const result = await Customers.findOne({ 
         attributes: ["postalAddress"],
         where: {
           eMail: "bob@email.com"
@@ -168,7 +168,7 @@ describe('Testing tableDAO.find method', () => {
   })
 
   it('Success for purpose with limited fields', async () => {
-    const result = await Customers.find({
+    const result = await Customers.findOne({
       where: {
         eMail: "bob@email.com"
       },

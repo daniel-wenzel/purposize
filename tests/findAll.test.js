@@ -6,7 +6,7 @@ const chai = require('chai')
 const expect = chai.expect
 
 let Customers
-describe('Testing tableDAO.find method', () => {
+describe('Testing tableDAO.findAll method', () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);

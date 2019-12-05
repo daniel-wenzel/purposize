@@ -9,7 +9,7 @@ module.exports = async function(originalArgs, originalAddPurpose, tableEntry, pu
   }
 
   const purposeDAO = typeof purpose === 'string' ?
-    await purposizeTables.purposes.find({ where: { purpose: purpose }}) : purpose
+    await purposizeTables.purposes.findOne({ where: { purpose: purpose }}) : purpose
 
   if (purposeDAO === null) {
     return sequelize.Promise.reject(new Error(`Unknown purpose: ${purpose}`))

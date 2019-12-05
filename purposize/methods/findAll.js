@@ -15,7 +15,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // Check purpose validity if given
   let purposeInstance
   if (typeof purposeName === 'string') {
-    purposeInstance = await purposizeTables.purposes.find({ where: { purpose: purposeName }})
+    purposeInstance = await purposizeTables.purposes.findOne({ where: { purpose: purposeName }})
     if (purposeInstance === null) {
       return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
     }
@@ -29,7 +29,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
     tableName: tableDAO.tableName
   }}).map( r => r.fieldName )
 
-  const nonPersonalDataFields = Object.keys(tableDAO.attributes).filter(f => !allPersonalDataFields.includes(f))
+  const nonPersonalDataFields = Object.keys(tableDAO.tableAttributes).filter(f => !allPersonalDataFields.includes(f))
 
   let allowedPersonalDataFields = []
   if (typeof purposeName === 'string') {

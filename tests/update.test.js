@@ -38,7 +38,7 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.find({
+    const carl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -57,7 +57,7 @@ describe('Testing update through instance.save method', () => {
     const a = await carl.save()
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.find({
+    const oldCarl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -65,7 +65,7 @@ describe('Testing update through instance.save method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.find({
+    const newCarl = await Customers.findOne({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -86,7 +86,7 @@ describe('Testing update through instance.save method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.find({
+      const carl = await Customers.findOne({
         where: {
           postalAddress: "1234 Cheapcity"
         },
@@ -104,7 +104,7 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.find({
+    const carl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -129,7 +129,7 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.find({
+    newCarl = await Customers.findOne({
       where: {
         eMail: "carl@email.com"
       },
@@ -182,7 +182,7 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.find({
+    const carl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -203,7 +203,7 @@ describe('Testing update through instance.update method', () => {
 
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.find({
+    const oldCarl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -211,7 +211,7 @@ describe('Testing update through instance.update method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.find({
+    const newCarl = await Customers.findOne({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -232,7 +232,7 @@ describe('Testing update through instance.update method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.find({
+      const carl = await Customers.findOne({
         where: {
           postalAddress: "1234 Cheapcity"
         },
@@ -251,7 +251,7 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.find({
+    const carl = await Customers.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -277,7 +277,7 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.find({
+    newCarl = await Customers.findOne({
       where: {
         eMail: "carl@email.com"
       },

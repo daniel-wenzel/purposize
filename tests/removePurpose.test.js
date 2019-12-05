@@ -35,7 +35,7 @@ describe('Testing instance.removePurpose method', () => {
     result = await metaDataTable.findAll()
     expect(result.length).to.equal(0)
 
-    let newAlice = await Customers.find({
+    let newAlice = await Customers.findOne({
       where: {
         id: alice.id
       },

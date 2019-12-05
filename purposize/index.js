@@ -85,7 +85,7 @@ async function loadPurposes(path) {
     if (!purposeInfo.compatibleWith || purposeInfo.compatibleWith.length == 0) {
       continue
     }
-    const purposeObj = await purposizeTables.purposes.find({
+    const purposeObj = await purposizeTables.purposes.findOne({
       where: {
         purpose: purposeInfo.name
       }

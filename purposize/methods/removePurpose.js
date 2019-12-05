@@ -44,7 +44,7 @@ module.exports = async function(originalArgs, originalRemovePurpose, tableEntry,
   // console.log(updateStatement)
   await tableEntry.update(updateStatement)
 
-  const purposeDAO = await purposizeTables.purposes.find({ where: { purpose: toBeRemovedPurpose }})
+  const purposeDAO = await purposizeTables.purposes.findOne({ where: { purpose: toBeRemovedPurpose }})
   if (purposeDAO === null) {
     return sequelize.Promise.reject(new Error(`Unknown purpose: ${toBeRemovedPurpose}`))
   }
