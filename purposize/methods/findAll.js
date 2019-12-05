@@ -2,7 +2,6 @@ const sequelize = require('sequelize')
 const Op = sequelize.Op
 
 const log = require('../log')
-const cachedFindAll = require("../cacheSequelizeQuery").findAll
 
 module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPurposeTable, purposizeTables, options) {
   // 1. Get a list of all attributes which can be accessed for purpose itself
@@ -16,7 +15,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // Check purpose validity if given
   let purposeInstance
   if (typeof purposeName === 'string') {
-    purposeInstance = await cachedFindAll(purposizeTables.purposes, { where: { purpose: purposeName }}, {single: true})
+    purposeInstance = await purposizeTables.purposes.find({ where: { purpose: purposeName }})
     if (purposeInstance === null) {
       return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
     }
@@ -26,20 +25,20 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   }
 
   // Step 1.
-  const allPersonalDataFields = (await cachedFindAll(purposizeTables.personalDataFields, { where: {
+  const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({ where: {
     tableName: tableDAO.tableName
-  }})).map( r => r.fieldName )
+  }}).map( r => r.fieldName )
 
-  nonPersonalDataFields = Object.keys(tableDAO.attributes).filter(f => !allPersonalDataFields.includes(f))
+  const nonPersonalDataFields = Object.keys(tableDAO.attributes).filter(f => !allPersonalDataFields.includes(f))
 
   let allowedPersonalDataFields = []
   if (typeof purposeName === 'string') {
-    allowedPersonalDataFields = (await cachedFindAll(purposizeTables.purposeDataFields, {
+    allowedPersonalDataFields = await purposizeTables.purposeDataFields.findAll({
       where: {
         purpose: purposeName,
         tableName: tableDAO.tableName
       }
-    })).map( r => r.fieldName )
+    }).map( r => r.fieldName )
   }
   const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
 

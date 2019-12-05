@@ -1,6 +1,6 @@
 const sequelize = require('sequelize')
 const log = require('../log')
-const cachedFindAll = require("../cacheSequelizeQuery").findAll
+
 module.exports = async function(originalArgs, originalAddPurpose, tableEntry, purposizeTables, options) {
   const purpose = originalArgs['0']
 
@@ -9,7 +9,7 @@ module.exports = async function(originalArgs, originalAddPurpose, tableEntry, pu
   }
 
   const purposeDAO = typeof purpose === 'string' ?
-    await cachedFindAll(purposizeTables.purposes,{ where: { purpose: purpose }}, {single: true}) : purpose
+    await purposizeTables.purposes.find({ where: { purpose: purpose }}) : purpose
 
   if (purposeDAO === null) {
     return sequelize.Promise.reject(new Error(`Unknown purpose: ${purpose}`))

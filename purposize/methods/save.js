@@ -1,5 +1,4 @@
 const sequelize = require('sequelize')
-const cachedFindAll = require("../cacheSequelizeQuery").findAll
 
 // Save handles creation of new instances and updating existing instances
 module.exports = async function(originalArgs, originalSave, tableEntry, purposizeTables) {
@@ -8,7 +7,7 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
 
   const givenFields = Object.keys(values)
   // Get all sensitive values for this table
-  let personalDataFields = await cachedFindAll(purposizeTables.personalDataFields, {
+  let personalDataFields = await purposizeTables.personalDataFields.findAll({
     where: {
       tableName: tableEntry.constructor.tableName
     }
@@ -45,19 +44,19 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   if (purposes.length == 0) {
     return sequelize.Promise.reject(new Error('Please specify a purpose when creating a new instance that contains personal data!'))
   }
-  const allPurposes = await cachedFindAll(purposizeTables.purposes, {})
+  const allPurposes = await purposizeTables.purposes.findAll()
   const unknownPurpose = purposes.find( p => !allPurposes.map(x => x.purpose).includes(p) )
   if (unknownPurpose !== undefined) {
     return sequelize.Promise.reject(new Error('Unknown purpose: ' + unknownPurpose))
   }
 
   // Get all fields that are allow for the specified purpose(s)
-  const allowedFields = (await cachedFindAll(purposizeTables.purposeDataFields, {
+  const allowedFields = await purposizeTables.purposeDataFields.findAll({
     where: {
       purpose: purposes,
       tableName: tableEntry.constructor.tableName
     }
-  })).map(p => p.fieldName)
+  }).map(p => p.fieldName)
 
   // Check if the given fields are allowed
   for (let i = 0, len = sensitiveDataFields.length; i < len; i++) {
@@ -71,14 +70,14 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   const instance = await originalSave.apply(tableEntry, originalArgs)
 
   // Store instance in metadatatable for every new purpose
-  for (purpose of newPurposes) {
+  for (let purpose of newPurposes) {
     await instance.addPurpose(purpose)
   }
 
   // Filter all personal data values to prevent any data leakage
-  const allPersonalDataFields = (await cachedFindAll(purposizeTables.personalDataFields, { where: {
+  const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({ where: {
     tableName: instance.constructor.tableName
-  }})).map( r => r.fieldName )
+  }}).map( r => r.fieldName )
 
   allPersonalDataFields.forEach( f => { 
     if (instance[f]) delete instance.dataValues[f] 

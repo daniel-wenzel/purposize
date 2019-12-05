@@ -1,6 +1,6 @@
 const purposizeTablePrefix = "purposize_"
 const Sequelize = require("sequelize")
-const cache = require("./cacheSequelizeQuery")
+
 module.exports = (sequelize) => {
   const tables = {}
   tables.purposes = sequelize.define(purposizeTablePrefix + 'purposes', {
@@ -19,8 +19,6 @@ module.exports = (sequelize) => {
   }, {
     getterMethods: {
       async transitiveCompatiblePurposes() {
-        const cachedAns = await cache.getCompatiblePurposes(this.purpose)
-        if (cachedAns) return cachedAns
         const allCompatiblePurposes = []
         let uncheckedPurposes = [this]
         while (uncheckedPurposes.length > 0) {
@@ -30,7 +28,6 @@ module.exports = (sequelize) => {
           allCompatiblePurposes.push(nextPurpose)
           uncheckedPurposes = uncheckedPurposes.concat(await nextPurpose.getCompatiblePurposes())
         }
-        cache.setCompatiblePurposes(this.purpose, allCompatiblePurposes)
         return allCompatiblePurposes
       }
     }
