@@ -66,8 +66,8 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
           }
         ]
       })
-      for (tableEntry of result) {
-        for (attachedPurpose of tableEntry.attachedPurposes) {
+      for (let tableEntry of result) {
+        for (let attachedPurpose of tableEntry.attachedPurposes) {
           await tableEntry.removePurpose(attachedPurpose.purpose)
         }
       }

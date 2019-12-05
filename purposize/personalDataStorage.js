@@ -12,7 +12,7 @@ function addPersonalData(tableName, fieldName) {
 }
 
 async function writePersonalDataIntoDB(personalDataFieldsTable) {
-  for (personalDataField of personalDataFields) {
+  for (let personalDataField of personalDataFields) {
     // console.log(`Storing personal data field: ${personalDataField.fieldName} in ${personalDataField.tableName} table`)
     await personalDataFieldsTable.upsert(personalDataField)
   }
