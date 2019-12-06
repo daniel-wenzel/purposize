@@ -24,7 +24,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
     return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
   }
 
-  // Step 1.
+  // Step 1: Get a list of all attributes which can be accessed for purpose itself
   const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({ where: {
     tableName: tableDAO.tableName
   }}).map( r => r.fieldName )
@@ -42,7 +42,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   }
   const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
 
-  // Step 2.
+  // Step 2: Check if where & select contains attributes that dont match the purpose
   // Check where clause
   const illegalWhereField = Object.keys(userQuery.where || {}).find( f => !allAllowedFields.includes(f) )
   if (illegalWhereField) {
@@ -63,12 +63,12 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
     }
   }
 
-  // Step 3.
+  // Step 3: If no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
   if (userQuery.attributes === undefined) {
     userQuery.attributes = allAllowedFields
   }
 
-  // Step 4.
+  // Step 4: Add list of compatible purposes to where clause
   if (typeof purposeName === 'string') {
     const allPossiblePurposes = await purposeInstance.transitiveCompatiblePurposes
     userQuery.include = userQuery.include || []
