@@ -13,7 +13,7 @@ describe('Testing instance.removePurpose method', () => {
     await sequelize.getQueryInterface().dropAllTables()
     Customers = sequelize.define(tableName, tableDefinition);
     await sequelize.sync()
-    await purposize.loadPurposes('./purposes.yml')
+    await purposize.loadPurposes(__dirname + "\\purposes.yml")
   })
 
   it('Successful purpose removal', async () => {

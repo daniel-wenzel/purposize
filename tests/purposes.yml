@@ -1,31 +1,36 @@
 purposes:
-- name: NEWSLETTER
-  relevantFields:
-    customers:
-      - eMail
-  loggingLevel: CHANGE
-- name: ORDER
-  relevantFields:
-    customers:
-      - eMail
-      - postalAddress
-  retentionPeriod: 60 # period in days; if nothing is specified, data is stored "forever"
-  # ACCESS -> select query
-  # CHANGE -> adding/removing of purpose
-  # ALL
-  # if no level specified, nothing is logged (NONE)
-  loggingLevel: ACCESS
-  compatibleWith:
-    - MONTHLY_DELIVERY
-- name: FULFILLMENT
-  relevantFields:
-    customers:
-      - postalAddress
-  compatibleWith:
-    - ORDER
-- name: MONTHLY_DELIVERY
-  relevantFields:
-    customers:
-      - eMail
-      - postalAddress
-  loggingLevel: CHANGE
+  - name: NEWSLETTER
+    relevantFields:
+      customers:
+        - eMail
+    loggingLevel: CHANGE
+  - name: ORDER
+    relevantFields:
+      customers:
+        - eMail
+        - postalAddress
+    retentionPeriod: 60 # period in days; if nothing is specified, data is stored "forever"
+    # ACCESS -> select query
+    # CHANGE -> adding/removing of purpose
+    # ALL
+    # if no level specified, nothing is logged (NONE)
+    loggingLevel: ACCESS
+    compatibleWith:
+      - MONTHLY_DELIVERY
+  - name: FULFILLMENT
+    relevantFields:
+      customers:
+        - postalAddress
+    compatibleWith:
+      - ORDER
+  - name: MONTHLY_DELIVERY
+    relevantFields:
+      customers:
+        - eMail
+        - postalAddress
+    loggingLevel: CHANGE
+  - name: WEIRD_PURPOSE
+    relevantFields:
+      customers:
+        - eMail
+        - unfulfilledOrders
