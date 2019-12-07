@@ -1,19 +1,19 @@
 const sequelize = require('./sequelize')
 const purposize = require('../purposize/index')
-const { tableName, tableDefinition } = require('./model')
+const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
 
-let Customers
+let Customer
 describe('Testing update through instance.save method', () => {
   beforeEach(async () => {
     await sequelize.getQueryInterface().dropAllTables()
-    Customers = sequelize.define(tableName, tableDefinition);
+    Customer = sequelize.define(modelName, modelDefinition);
     await sequelize.sync()
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
 
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       eMail: "alice@email.com",
       postalAddress: "1234 Shoppington",
       unfulfilledOrders: 1
@@ -21,7 +21,7 @@ describe('Testing update through instance.save method', () => {
       purpose: 'ORDER'
     })
 
-    const bob = await Customers.create({
+    const bob = await Customer.create({
       eMail: "bob@email.com",
       postalAddress: "1234 Buytown",
       unfulfilledOrders: 2
@@ -29,7 +29,7 @@ describe('Testing update through instance.save method', () => {
       purpose: ['ORDER', 'NEWSLETTER']
     })
 
-    const carl = await Customers.create({
+    const carl = await Customer.create({
       // eMail: "carl@email.com",
       postalAddress: "1234 Cheapcity",
     }, {
@@ -38,16 +38,16 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.findOne({
+    const carl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
       purpose: 'FULFILLMENT'
     })
 
-    const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const oldCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl was only stored for the purpose FULFILLMENT
@@ -57,7 +57,7 @@ describe('Testing update through instance.save method', () => {
     const a = await carl.save()
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.findOne({
+    const oldCarl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -65,7 +65,7 @@ describe('Testing update through instance.save method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.findOne({
+    const newCarl = await Customer.findOne({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -75,9 +75,9 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.equal("9876 Berlin")
 
-    const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const newCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl is still only stored for the purpose FULFILLMENT
@@ -86,7 +86,7 @@ describe('Testing update through instance.save method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.findOne({
+      const carl = await Customer.findOne({
         where: {
           postalAddress: "1234 Cheapcity"
         },
@@ -104,16 +104,16 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.findOne({
+    const carl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
       purpose: 'FULFILLMENT'
     })
 
-    const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const oldCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl was only stored for the purpose FULFILLMENT
@@ -129,7 +129,7 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.findOne({
+    newCarl = await Customer.findOne({
       where: {
         eMail: "carl@email.com"
       },
@@ -139,9 +139,9 @@ describe('Testing update through instance.save method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.equal("carl@email.com")
 
-    const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const newCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: newCarl.id
+        customerId: newCarl.id
       }
     })
     // Check that carl is now stored for two purposes: FULFILLMENT and NEWSLETTER
@@ -153,11 +153,11 @@ describe('Testing update through instance.save method', () => {
 describe('Testing update through instance.update method', () => {
   beforeEach(async () => {
     await sequelize.getQueryInterface().dropAllTables()
-    Customers = sequelize.define(tableName, tableDefinition);
+    Customer = sequelize.define(modelName, modelDefinition);
     await sequelize.sync()
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
 
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       eMail: "alice@email.com",
       postalAddress: "1234 Shoppington",
       unfulfilledOrders: 1
@@ -165,7 +165,7 @@ describe('Testing update through instance.update method', () => {
       purpose: 'ORDER'
     })
 
-    const bob = await Customers.create({
+    const bob = await Customer.create({
       eMail: "bob@email.com",
       postalAddress: "1234 Buytown",
       unfulfilledOrders: 2
@@ -173,7 +173,7 @@ describe('Testing update through instance.update method', () => {
       purpose: ['ORDER', 'NEWSLETTER']
     })
 
-    const carl = await Customers.create({
+    const carl = await Customer.create({
       // eMail: "carl@email.com",
       postalAddress: "1234 Cheapcity",
     }, {
@@ -182,16 +182,16 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update without adding new data fields', async () => {
-    const carl = await Customers.findOne({
+    const carl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
       purpose: 'FULFILLMENT'
     })
 
-    const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const oldCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl was only stored for the purpose FULFILLMENT
@@ -203,7 +203,7 @@ describe('Testing update through instance.update method', () => {
 
     // console.log(a.dataValues)
 
-    const oldCarl = await Customers.findOne({
+    const oldCarl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
@@ -211,7 +211,7 @@ describe('Testing update through instance.update method', () => {
     })
     expect(oldCarl).to.be.null
 
-    const newCarl = await Customers.findOne({
+    const newCarl = await Customer.findOne({
       where: {
         postalAddress: "9876 Berlin"
       },
@@ -221,9 +221,9 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.equal("9876 Berlin")
 
-    const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const newCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl is still only stored for the purpose FULFILLMENT
@@ -232,7 +232,7 @@ describe('Testing update through instance.update method', () => {
 
   it('Error when adding a new illegal field and saving', async () => {
     try {
-      const carl = await Customers.findOne({
+      const carl = await Customer.findOne({
         where: {
           postalAddress: "1234 Cheapcity"
         },
@@ -251,16 +251,16 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Successful update with adding new data fields', async () => {
-    const carl = await Customers.findOne({
+    const carl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
       },
       purpose: 'FULFILLMENT'
     })
 
-    const oldCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const oldCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: carl.id
+        customerId: carl.id
       }
     })
     // Check that carl was only stored for the purpose FULFILLMENT
@@ -277,7 +277,7 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.be.undefined
 
-    newCarl = await Customers.findOne({
+    newCarl = await Customer.findOne({
       where: {
         eMail: "carl@email.com"
       },
@@ -287,9 +287,9 @@ describe('Testing update through instance.update method', () => {
     expect(newCarl.postalAddress).to.be.undefined
     expect(newCarl.eMail).to.equal("carl@email.com")
 
-    const newCarlPurposes = await sequelize.model('purposize_customersPurposes').findAll({
+    const newCarlPurposes = await sequelize.model(`purposize_${Customer.tableName}Purposes`).findAll({
       where: {
-        customersId: newCarl.id
+        customerId: newCarl.id
       }
     })
     // Check that carl is now stored for two purposes: FULFILLMENT and NEWSLETTER

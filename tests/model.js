@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
-exports.tableName = 'customers'
-exports.tableDefinition = {
+exports.modelName = 'customer'
+exports.modelDefinition = {
   eMail: {
     type: Sequelize.STRING,
     isPersonalData: true
@@ -18,8 +18,8 @@ exports.tableDefinition = {
     type: Sequelize.INTEGER
   }
 }
-exports.personalDataFields = Object.keys(this.tableDefinition).reduce( (array, field) => {
-  if (this.tableDefinition[field].isPersonalData) {
+exports.personalDataFields = Object.keys(this.modelDefinition).reduce( (array, field) => {
+  if (this.modelDefinition[field].isPersonalData) {
     array.push(field)
   }
   return array

@@ -1,26 +1,26 @@
 const sequelize = require('./sequelize')
 const purposize = require('../purposize/index')
-const { tableName, tableDefinition } = require('./model')
+const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
 
 
-let Customers
+let Customer
 describe('Testing instance.addPurpose method', () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
-    Customers = sequelize.define(tableName, tableDefinition);
+    Customer = sequelize.define(modelName, modelDefinition);
     await sequelize.sync()
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
   })
 
   it('Successful purpose addition', async () => {
-    const alice = await Customers.create({
+    const alice = await Customer.create({
         unfulfilledOrders: 2
     })
 
-    const metaDataTable = sequelize.model('purposize_customersPurposes')
+    const metaDataTable = sequelize.model(`purposize_${Customer.tableName}Purposes`)
     let result = await metaDataTable.findAll()
     
     expect(result.length).to.equal(0)
@@ -31,7 +31,7 @@ describe('Testing instance.addPurpose method', () => {
   })
 
   it('Error when adding unknown purpose', async () => {
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       unfulfilledOrders: 2
     })
 
@@ -45,7 +45,7 @@ describe('Testing instance.addPurpose method', () => {
   })
 
   it('Error when adding empty purpose', async () => {
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       unfulfilledOrders: 2
     })
 
@@ -59,7 +59,7 @@ describe('Testing instance.addPurpose method', () => {
   })
 
   it('Error when adding empty purpose', async () => {
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       unfulfilledOrders: 2
     })
 

@@ -1,19 +1,19 @@
 const sequelize = require("./sequelize")
 const purposize = require("../purposize/index")
-const { tableName, tableDefinition } = require("./model")
+const { modelName, modelDefinition } = require("./model")
 
 const chai = require("chai")
 const expect = chai.expect
 
-let Customers
+let Customer
 describe("Tests for configuration of purposes.yml file", () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
-    Customers = sequelize.define(tableName, tableDefinition)
+    Customer = sequelize.define(modelName, modelDefinition)
     await sequelize.sync()
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
 
-    const alice = await Customers.create(
+    const alice = await Customer.create(
       {
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
@@ -24,7 +24,7 @@ describe("Tests for configuration of purposes.yml file", () => {
       }
     )
 
-    const bob = await Customers.create(
+    const bob = await Customer.create(
       {
         eMail: "bob@email.com",
         postalAddress: "1234 Buytown",
@@ -37,7 +37,7 @@ describe("Tests for configuration of purposes.yml file", () => {
   })
 
   it("No error when marking field as relevant although it is not personal data", async () => {
-    const result = await Customers.findOne({
+    const result = await Customer.findOne({
       where: {
         eMail: "bob@email.com",
       },

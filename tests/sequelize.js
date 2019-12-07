@@ -4,9 +4,9 @@ const purposize = require('../purposize/index')
 const chai = require('chai')
 const expect = chai.expect
 
-const sequelize = new Sequelize('testdb', 'root', 'admin', {
+const sequelize = new Sequelize('testdb', 'postgres', 'admin', {
   host: 'localhost',
-  dialect: 'mysql',
+  dialect: 'postgres',
   logging: false // Prevent sequelize from logging all SQL queries
 })
 

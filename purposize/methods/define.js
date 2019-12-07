@@ -6,9 +6,16 @@ const extendTableDAO = require("../extendTableDAO")
 const purposizeTablePrefix = "purposize_"
 
 module.exports = function(originalArgs, originalDefine, sequelize, purposizeTables, options) {
-  const tableName = originalArgs['0']
+  // Execute original define method
+  const tableDAO = originalDefine.apply(sequelize, originalArgs);
+  
+  const tableName = tableDAO.tableName
+  const modelName = tableDAO.name
   const fields = originalArgs['1']
   let containsPersonalData = false
+
+  // console.log(Object.getOwnPropertyNames(tableDAO))
+  // console.log(tableDAO.tableName)
 
   // Check if the fields contain personal data
   Object.keys(fields).forEach(fieldName => {
@@ -18,9 +25,6 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
       containsPersonalData = true
     }
   })
-
-  // Execute original define method
-  const tableDAO = originalDefine.apply(sequelize, originalArgs);
 
   // When there is personal data, create metadata purpose table
   if (containsPersonalData) {
@@ -32,11 +36,11 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
     tableDAO.belongsToMany(purposizeTables.purposes, {
       through: metaDataPurposeTable,
       as: 'Purposes',
-      foreignKey: tableName + 'Id',
+      foreignKey: modelName + 'Id',
     });
     tableDAO.hasMany(metaDataPurposeTable, {
       as: 'attachedPurposes',
-      foreignKey: tableName + 'Id'
+      foreignKey: modelName + 'Id'
     })
     purposizeTables.purposes.belongsToMany(tableDAO, {
       through: metaDataPurposeTable,

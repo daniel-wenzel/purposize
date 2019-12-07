@@ -22,7 +22,7 @@ const purposize = require('purposize')
 const sequelize = new Sequelize(...)
 purposize.init(sequelize)
 
-const Customers = sequelize.define('customers', {
+const Customer = sequelize.define('customer', {
   eMail: {
     type: Sequelize.STRING,
     isPersonalData: true
@@ -50,7 +50,7 @@ When specifying only non-personal attributes the purpose field can be omitted.
 **The returned instance only contains non-personal attributes** <br> The reason is to prevent any data leaks. Furthermore, every access of personal data must be bound to one specific purpose!
 
 ```javascript
-const alice = await Customers.create({
+const alice = await Customer.create({
   eMail: "alice@email.com",
   postalAddress: "1234 Shoppington",
 }, {
@@ -61,7 +61,7 @@ const alice = await Customers.create({
 // Keep in mind: only non-personal data is returned!
 // alice.eMail and alice.postalAddress will be undefined
 
-const bob = await Customers.create({
+const bob = await Customer.create({
   unfulfilledOrders: 2
 })
 // No purpose needed since unfulfilledOrders is a non-personal attribute
@@ -76,7 +76,7 @@ The returned result may contain instances that have been stored for exactly the 
 When no purpose is specified, the query result only contains non-personal data.
 
 ```javascript
-const result = await Customers.findAll({
+const result = await Customer.findAll({
   attributes: [ ... ]
   where: { ... },
   purpose: 'NEWSLETTER'
@@ -97,7 +97,7 @@ When wanting to add a new personal data field to an instance you must again spec
 
 ```javascript
 // Adding no personal data fields
-const alice = await Customers.findOne({ 
+const alice = await Customer.findOne({ 
   where: {
     eMail: "alice@email.com"
   },
@@ -109,7 +109,7 @@ alice.postalAddress = "9876 Cheapcity"
 await alice.save()
 
 // Adding new personal data fields
-const bob = await Customers.findOne({ 
+const bob = await Customer.findOne({ 
   where: {
     unfulfilledOrders: 2
   }

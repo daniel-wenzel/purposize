@@ -1,19 +1,19 @@
 const sequelize = require('./sequelize')
 const purposize = require('../purposize/index')
-const { tableName, tableDefinition } = require('./model')
+const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
 
-let Customers
+let Customer
 describe('Testing tableDAO.findAll method', () => {
   before(async () => {
     await sequelize.getQueryInterface().dropAllTables()
-    Customers = sequelize.define(tableName, tableDefinition);
+    Customer = sequelize.define(modelName, modelDefinition);
     await sequelize.sync()
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
     
-    const alice = await Customers.create({
+    const alice = await Customer.create({
       eMail: "alice@email.com",
       postalAddress: "1234 Shoppington",
       unfulfilledOrders: 1
@@ -21,7 +21,7 @@ describe('Testing tableDAO.findAll method', () => {
       purpose: 'ORDER'
     })
 
-    const bob = await Customers.create({
+    const bob = await Customer.create({
       eMail: "bob@email.com",
       postalAddress: "1234 Buytown",
       unfulfilledOrders: 2
@@ -29,7 +29,7 @@ describe('Testing tableDAO.findAll method', () => {
       purpose: ['ORDER', 'NEWSLETTER']
     })
 
-    const carl = await Customers.create({
+    const carl = await Customer.create({
       // eMail: "carl@email.com",
       postalAddress: "1234 Cheapcity",
     }, {
@@ -38,7 +38,7 @@ describe('Testing tableDAO.findAll method', () => {
   })
 
   it('Success for retrieval of customers with transitive purpose', async () => {
-    const result = await Customers.findAll({ 
+    const result = await Customer.findAll({ 
       purpose: 'FULFILLMENT'
     })
     expect(result.length).to.equal(3)
@@ -49,7 +49,7 @@ describe('Testing tableDAO.findAll method', () => {
   })
 
   it('Successful findAll without conditions', async () => {
-    const result = await Customers.findAll({ 
+    const result = await Customer.findAll({ 
       purpose: 'ORDER'
     })
     expect(result.length).to.equal(2)
