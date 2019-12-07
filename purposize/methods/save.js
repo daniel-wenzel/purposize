@@ -62,7 +62,7 @@ module.exports = async function(originalArgs, originalSave, tableEntry, purposiz
   for (let i = 0, len = sensitiveDataFields.length; i < len; i++) {
     const givenField = sensitiveDataFields[i]
     if (!allowedFields.some(f => f === givenField)) {
-      return sequelize.Promise.reject(new Error(`Field "${givenField}" is incompatible with purpose(s): ${purposes.join(', ')}`))
+      return sequelize.Promise.reject(new Error(`Field "${givenField}" in table "${tableEntry.constructor.tableName}" is incompatible with purpose(s): ${purposes.join(', ')}`))
     }
   }
 
