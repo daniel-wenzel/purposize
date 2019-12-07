@@ -26,6 +26,8 @@ module.exports = function(originalArgs, originalDefine, sequelize, purposizeTabl
   if (containsPersonalData) {
     const metaDataPurposeTable = sequelize.define(purposizeTablePrefix + tableName + "Purposes", {
       until: Sequelize.DATE
+    }, {
+      tableName: purposizeTablePrefix + tableName + "_purposes"
     })
     tableDAO.belongsToMany(purposizeTables.purposes, {
       through: metaDataPurposeTable,

@@ -32,26 +32,20 @@ module.exports = (sequelize) => {
       }
     }
   })
-  /*  tables.purposeCompatible = sequelize.define(purposizeTablePrefix + 'purposeCompatibleWith', {
-      purpose: {
-        type: Sequelize.STRING,
-        primaryKey: true
-      },
-      compatiblePurpose: {
-        type: Sequelize.STRING,
-        primaryKey: true
-      }
-    })*/
+
+  tables.compatiblePurposes = sequelize.define(purposizeTablePrefix + "compatiblePurposes", {
+    // Properties are filled by association
+  }, {
+    tableName: purposizeTablePrefix + "compatible_purposes"
+  })
   tables.purposes.belongsToMany(tables.purposes, {
     as: "CompatiblePurposes",
-    through: purposizeTablePrefix + "compatiblePurposes",
-    foreignKey: 'originalPurpose'
+    through: tables.compatiblePurposes,
+    foreignKey: "originalPurpose",
+    otherKey: "compatiblePurpose"
   })
-  tables.purposes.belongsToMany(tables.purposes, {
-    as: "CompatiblingPurposes",
-    through: purposizeTablePrefix + "compatiblePurposes",
-    foreignKey: 'compatiblePurpose'
-  })
+
+
   tables.personalDataFields = sequelize.define(purposizeTablePrefix + 'personalDataFields', {
     tableName: {
       type: Sequelize.STRING,
@@ -61,10 +55,11 @@ module.exports = (sequelize) => {
       type: Sequelize.STRING,
       primaryKey: true
     }
+  }, { 
+    tableName: purposizeTablePrefix + "personal_data_fields"
   })
 
-  const purposeDataFieldsName = purposizeTablePrefix + 'purposeDataFields'
-  tables.purposeDataFields = sequelize.define(purposeDataFieldsName, {
+  tables.purposeDataFields = sequelize.define(purposizeTablePrefix + 'purposeDataFields', {
     purpose: {
       type: Sequelize.STRING,
       primaryKey: true
@@ -77,6 +72,8 @@ module.exports = (sequelize) => {
       type: Sequelize.STRING,
       primaryKey: true
     },
+  }, { 
+    tableName: purposizeTablePrefix + "purpose_data_fields"
   })
 
   return tables
