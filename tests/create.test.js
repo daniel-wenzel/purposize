@@ -22,11 +22,11 @@ describe('Testing tableDAO.create method', () => {
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error when creating instance with incompatible data fields to given purpose', async () => {
@@ -38,11 +38,11 @@ describe('Testing tableDAO.create method', () => {
       }, {
         purpose: 'NEWSLETTER'
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error when creating instance with unknown purpose', async () => {
@@ -54,11 +54,11 @@ describe('Testing tableDAO.create method', () => {
       }, {
         purpose: 'TEST'
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error when creating instance with unknown purpose for multiple purposes', async () => {
@@ -70,11 +70,11 @@ describe('Testing tableDAO.create method', () => {
       }, {
         purpose: ['ORDER', 'TEST']
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error when creating instance with multiple purposes and incompatible data fields', async () => {
@@ -87,11 +87,11 @@ describe('Testing tableDAO.create method', () => {
       }, {
         purpose: ['FULFILLMENT', 'NEWSLETTER']
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Successful creation with all compatible attributes', async () => {
@@ -165,8 +165,8 @@ describe('Testing tableDAO.create method', () => {
       purpose: ['FULFILLMENT', 'NEWSLETTER']
     })
     expect(alice).not.to.be.undefined
-    expect(alice.eMail).to.be.undefined 
-    expect(alice.postalAddress).to.be.undefined
+    expect(alice.eMail).not.to.be.undefined 
+    expect(alice.postalAddress).not.to.be.undefined
     expect(alice.unfulfilledOrders).not.to.be.undefined
   })
 

@@ -35,6 +35,13 @@ describe('Testing update through instance.save method', () => {
     }, {
       purpose: 'FULFILLMENT'
     })
+
+    const david = await Customer.create({
+      eMail: "david@email.com",
+      postalAddress: "1234 Idktown",
+    }, {
+      purpose: ["NEWSLETTER", 'FULFILLMENT']
+    })
   })
 
   it('Successful update without adding new data fields', async () => {
@@ -54,7 +61,9 @@ describe('Testing update through instance.save method', () => {
     expect(oldCarlPurposes.length).to.equal(1)
 
     carl.postalAddress = "9876 Berlin"
-    const a = await carl.save()
+    const a = await carl.save({
+      purpose: "FULFILLMENT"
+    })
     // console.log(a.dataValues)
 
     const oldCarl = await Customer.findOne({
@@ -96,14 +105,13 @@ describe('Testing update through instance.save method', () => {
       carl.eMail = "carl@email.com"
       await carl.save()
 
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
-  it('Successful update with adding new data fields', async () => {
+  it('Successful update with adding new data fields for a new purpose', async () => {
     const carl = await Customer.findOne({
       where: {
         postalAddress: "1234 Cheapcity"
@@ -127,7 +135,7 @@ describe('Testing update through instance.save method', () => {
     // Check that save method does not leak personal data
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
-    expect(newCarl.eMail).to.be.undefined
+    expect(newCarl.eMail).not.to.be.undefined
 
     newCarl = await Customer.findOne({
       where: {
@@ -147,6 +155,49 @@ describe('Testing update through instance.save method', () => {
     // Check that carl is now stored for two purposes: FULFILLMENT and NEWSLETTER
     expect(newCarlPurposes.length).to.equal(2)
     expect(newCarlPurposes.map( p => p.purpose ).includes('NEWSLETTER')).to.equal(true)
+  })
+
+  it("Make sure update does not leak personal data", async () => {
+    const bob = await Customer.findOne({
+      where: {
+        eMail: "bob@email.com"
+      },
+      purpose: 'NEWSLETTER'
+    })
+
+    bob.eMail = "newBob@email.com"
+    const newBob = await bob.save({
+      purpose: "NEWSLETTER"
+    })
+
+    expect(newBob.eMail).not.to.be.undefined
+    expect(newBob.postalAddress).to.be.undefined
+
+  })
+
+  it("Make sure update does not leak personal data", async () => {
+    const david = await Customer.findOne({
+      where: {
+        eMail: "david@email.com"
+      },
+      purpose: 'NEWSLETTER'
+    })
+
+    expect(david.postalAddress).to.be.undefined
+
+
+    david.postalAddress = "1234 Sometown"
+
+    try {
+      const newDavid = await david.save({
+        // purpose: ["NEWSLETTER", "FULFILLMENT"]
+        purpose: "NEWSLETTER"
+      })
+
+      expect.fail(null, null, 'No error was thrown')
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error)
+    }
   })
 })
 
@@ -199,6 +250,8 @@ describe('Testing update through instance.update method', () => {
 
     const a = await carl.update({
       postalAddress: "9876 Berlin"
+    }, {
+      purpose: "FULFILLMENT"
     })
 
     // console.log(a.dataValues)
@@ -243,11 +296,10 @@ describe('Testing update through instance.update method', () => {
         eMail: "carl@email.com"
       })
 
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
-    }
-    expect.fail(null, null, 'No error was thrown')
+    } 
   })
 
   it('Successful update with adding new data fields', async () => {
@@ -275,7 +327,7 @@ describe('Testing update through instance.update method', () => {
     // Update method should not leak personal data
     expect(newCarl).not.to.be.null
     expect(newCarl.postalAddress).to.be.undefined
-    expect(newCarl.eMail).to.be.undefined
+    expect(newCarl.eMail).not.to.be.undefined
 
     newCarl = await Customer.findOne({
       where: {

@@ -43,11 +43,11 @@ describe('Testing tableDAO.findOne method', () => {
           eMail: "bob@email.com"
         }
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error for no purpose, no where fields, sensitive select fields', async () => {
@@ -55,11 +55,11 @@ describe('Testing tableDAO.findOne method', () => {
       const result = await Customer.findOne({ 
         attributes: ["eMail"]
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error for unknown purpose, sensitive where fields, no select fields', async () => {
@@ -70,11 +70,11 @@ describe('Testing tableDAO.findOne method', () => {
         },
         purpose: 'TEST'
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Error for invalid purpose, sensitive where fields, no select fields', async () => {
@@ -85,11 +85,11 @@ describe('Testing tableDAO.findOne method', () => {
         },
         purpose: true
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Success for no purpose, unsensitive where fields, no select fields', async () => {
@@ -144,11 +144,11 @@ describe('Testing tableDAO.findOne method', () => {
         },
         purpose: 'NEWSLETTER'
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
-    }
-    expect.fail(null, null, 'No error was thrown')
+    } 
   })
 
   it('Error for purpose with illegal select fields', async () => {
@@ -160,11 +160,11 @@ describe('Testing tableDAO.findOne method', () => {
         },
         purpose: 'NEWSLETTER'
       })
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
   })
 
   it('Success for purpose with limited fields', async () => {

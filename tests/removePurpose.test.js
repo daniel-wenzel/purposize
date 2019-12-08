@@ -59,11 +59,12 @@ describe('Testing instance.removePurpose method', () => {
 
     try {
       await alice.removePurpose('TEST')
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
+    
   })
 
   it('Error when adding empty purpose', async () => {
@@ -76,11 +77,11 @@ describe('Testing instance.removePurpose method', () => {
 
     try {
       await alice.removePurpose('')
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
-    }
-    expect.fail(null, null, 'No error was thrown')
+    }   
   })
 
   it('Error when adding empty purpose', async () => {
@@ -93,10 +94,11 @@ describe('Testing instance.removePurpose method', () => {
 
     try {
       await alice.removePurpose()
+
+      expect.fail(null, null, 'No error was thrown')
     } catch (error) {
       expect(error).to.be.instanceOf(Error)
-      return
     }
-    expect.fail(null, null, 'No error was thrown')
+    
   })
 })
