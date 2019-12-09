@@ -234,7 +234,7 @@ describe('Testing tableDAO.findOne method', () => {
     ))
   })
 
-  it.only("Check for no 'attachedPurposes' field", async () => {
+  it("Check for no 'attachedPurposes' field", async () => {
     const result = await Customer.findOne({ 
       where: {
         eMail: "bob@email.com",
