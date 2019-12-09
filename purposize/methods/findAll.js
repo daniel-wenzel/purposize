@@ -54,17 +54,65 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   }
 
   // Check select clause
-  const illegalSelectField = (userQuery.attributes || []).find( f => !allAllowedFields.includes(f) )
-  if (illegalSelectField) {
-    if (purposeName === undefined) {
-      return sequelize.Promise.reject(new Error(`Please specify a purpose when querying for personal data fields such as "${illegalSelectField}"`))
-    } else {
-      return sequelize.Promise.reject(new Error(`Field "${illegalSelectField}" is incompatible with purpose(s): ${purposeName}`))
-    }
-  }
+  if (userQuery.attributes !== undefined) {
+    // Helper function
+    const checkSelectArray = (selectArray) => {
+      let illegalSelectField = selectArray.find( f => {
+        if (Array.isArray(f)) {
+          // Array structure might be used for renaming attributes
+          return !allAllowedFields.includes(f[0])
+        } else {
+          return !allAllowedFields.includes(f)
+        }
+      })
 
-  // Step 3: If no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
-  if (userQuery.attributes === undefined) {
+      if (illegalSelectField) {
+        if (purposeName === undefined) {
+          selectError = new Error(`Please specify a purpose when querying for personal data fields such as "${illegalSelectField}"`)
+        } else {
+          selectError = new Error(`Field "${illegalSelectField}" is incompatible with purpose(s): ${purposeName}`)
+        }
+      }
+    }
+
+    let selectError
+
+    // Select clause is given as an array
+    if (Array.isArray(userQuery.attributes)) {
+      if (userQuery.attributes !== 0) {
+        checkSelectArray(userQuery.attributes)
+        if (selectError) {
+          return sequelize.Promise.reject(selectError)
+        }
+      }
+    }
+    
+    // Select clause is given as an object
+    if (typeof userQuery.attributes === "object") {
+      // Exclude all fields that are not allowed by given purpose
+      const excludeFields = allPersonalDataFields.reduce((excludeFields, f) => {
+        if (!allAllowedFields.includes(f)) {
+          excludeFields.push(f)
+        }
+        return excludeFields
+      }, [])
+
+      if (userQuery.attributes.include) {
+        checkSelectArray(userQuery.attributes.include)
+        if (selectError) {
+          return sequelize.Promise.reject(selectError)
+        }
+      } 
+      
+      // If user has given exclude array extend it. If not set the exclude array
+      if (userQuery.attributes.exclude) {
+        userQuery.attributes.exclude = userQuery.attributes.exclude.concat(excludeFields)
+      } else {
+        userQuery.attributes.exclude = excludeFields
+      }
+    }
+  } else {
+    // Step 3: If no attributes in select are set, insert all allowed attributes (compatible attributes + non personal data)
     userQuery.attributes = allAllowedFields
   }
 
@@ -79,7 +127,8 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
           [Op.or]: allPossiblePurposes.map( p => p.purpose )
         }
       },
-      as: 'attachedPurposes'
+      as: 'attachedPurposes',
+      attributes: []
     })
   }
 

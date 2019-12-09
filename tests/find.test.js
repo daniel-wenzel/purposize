@@ -155,4 +155,93 @@ describe('Testing tableDAO.findOne method', () => {
     expect(result.unfulfilledOrders).not.to.be.undefined
   })
 
+  it("Success for empty attribute array", async () => {
+    const result = await Customer.findOne({
+      where: {
+        eMail: "bob@email.com"
+      },
+      attributes: [],
+      purpose: 'NEWSLETTER'
+    })
+
+    expect(result.postalAddress).to.be.undefined
+    expect(result.eMail).to.be.undefined
+    expect(result.unfulfilledOrders).to.be.undefined
+  })
+
+  it("Success for selecting with attribute object with empty include", async () => {
+    const result = await Customer.findOne({
+      where: {
+        eMail: "bob@email.com"
+      },
+      attributes: {
+        include: []
+      },
+      purpose: 'NEWSLETTER'
+    })
+
+    expect(result.postalAddress).to.be.undefined
+    expect(result.eMail).not.to.be.undefined
+    expect(result.unfulfilledOrders).not.to.be.undefined
+  })
+
+  it("Success for selecting with attribute object without exclude", async () => {
+    const result = await Customer.findOne({
+      where: {
+        eMail: "bob@email.com"
+      },
+      attributes: {
+        include: ["unfulfilledOrders"]
+      },
+      purpose: 'NEWSLETTER'
+    })
+
+    expect(result.postalAddress).to.be.undefined
+    expect(result.eMail).not.to.be.undefined
+    expect(result.unfulfilledOrders).not.to.be.undefined
+  })
+
+  it("Success for selecting with attribute object using exclude", async () => {
+    const result = await Customer.findOne({
+      where: {
+        eMail: "bob@email.com"
+      },
+      attributes: {
+        include: ["eMail"],
+        exclude: ["unfulfilledOrders"]
+      },
+      purpose: 'NEWSLETTER'
+    })
+
+    // console.log(result.dataValues)
+
+    expect(result.postalAddress).to.be.undefined
+    expect(result.eMail).not.to.be.undefined
+    expect(result.unfulfilledOrders).to.be.undefined
+  })
+
+  it('Error for purpose with illegal select fields in attributes object', async () => {
+    await expectThrowsAsync(() => (
+      Customer.findOne({ 
+        attributes: {
+          include: ["postalAddress"]
+        },
+        where: {
+          eMail: "bob@email.com"
+        },
+        purpose: 'NEWSLETTER'
+      })
+    ))
+  })
+
+  it.only("Check for no 'attachedPurposes' field", async () => {
+    const result = await Customer.findOne({ 
+      where: {
+        eMail: "bob@email.com",
+      },
+      purpose: 'ORDER'
+    })
+    expect(result.attachedPurposes).to.be.undefined
+  })
+
 })
