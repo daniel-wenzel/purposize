@@ -4,7 +4,7 @@ const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
-
+const { expectThrowsAsync } = require("./helpers")
 
 let Customer
 describe('Testing instance.addPurpose method', () => {
@@ -35,13 +35,7 @@ describe('Testing instance.addPurpose method', () => {
       unfulfilledOrders: 2
     })
 
-    try {
-      await alice.addPurpose('TEST')
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    await expectThrowsAsync(() => alice.addPurpose('TEST'))
   })
 
   it('Error when adding empty purpose', async () => {
@@ -49,13 +43,7 @@ describe('Testing instance.addPurpose method', () => {
       unfulfilledOrders: 2
     })
 
-    try {
-      await alice.addPurpose('')
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    await expectThrowsAsync(() => alice.addPurpose(''))
   })
 
   it('Error when adding empty purpose', async () => {
@@ -63,12 +51,6 @@ describe('Testing instance.addPurpose method', () => {
       unfulfilledOrders: 2
     })
 
-    try {
-      await alice.addPurpose()
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    await expectThrowsAsync(() => alice.addPurpose())
   })
 })

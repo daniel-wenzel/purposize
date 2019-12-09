@@ -5,7 +5,7 @@ const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
-
+const { expectThrowsAsync } = require("./helpers")
 
 let Customer
 describe('Testing instance.removePurpose method', () => {
@@ -57,13 +57,7 @@ describe('Testing instance.removePurpose method', () => {
       purpose: ['NEWSLETTER']
     })
 
-    try {
-      await alice.removePurpose('TEST')
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    await expectThrowsAsync(() => alice.removePurpose('TEST'))
     
   })
 
@@ -75,13 +69,7 @@ describe('Testing instance.removePurpose method', () => {
       purpose: ['NEWSLETTER']
     })
 
-    try {
-      await alice.removePurpose('')
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }   
+    await expectThrowsAsync(() => alice.removePurpose(''))
   })
 
   it('Error when adding empty purpose', async () => {
@@ -92,13 +80,6 @@ describe('Testing instance.removePurpose method', () => {
       purpose: ['NEWSLETTER']
     })
 
-    try {
-      await alice.removePurpose()
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
-    
+    await expectThrowsAsync(() => alice.removePurpose())  
   })
 })

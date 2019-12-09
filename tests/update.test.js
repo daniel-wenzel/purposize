@@ -4,6 +4,7 @@ const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
+const { expectThrowsAsync } = require("./helpers")
 
 let Customer
 describe('Testing update through instance.save method', () => {
@@ -94,21 +95,16 @@ describe('Testing update through instance.save method', () => {
   })
 
   it('Error when adding a new illegal field and saving', async () => {
-    try {
-      const carl = await Customer.findOne({
-        where: {
-          postalAddress: "1234 Cheapcity"
-        },
-        purpose: 'FULFILLMENT'
-      })
+    const carl = await Customer.findOne({
+      where: {
+        postalAddress: "1234 Cheapcity"
+      },
+      purpose: 'FULFILLMENT'
+    })
 
-      carl.eMail = "carl@email.com"
-      await carl.save()
+    carl.eMail = "carl@email.com"
 
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    await expectThrowsAsync(() => carl.save())
   })
 
   it('Successful update with adding new data fields for a new purpose', async () => {
@@ -188,16 +184,12 @@ describe('Testing update through instance.save method', () => {
 
     david.postalAddress = "1234 Sometown"
 
-    try {
-      const newDavid = await david.save({
+    await expectThrowsAsync(() => (
+      david.save({
         // purpose: ["NEWSLETTER", "FULFILLMENT"]
         purpose: "NEWSLETTER"
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 })
 
@@ -284,22 +276,18 @@ describe('Testing update through instance.update method', () => {
   })
 
   it('Error when adding a new illegal field and saving', async () => {
-    try {
-      const carl = await Customer.findOne({
-        where: {
-          postalAddress: "1234 Cheapcity"
-        },
-        purpose: 'FULFILLMENT'
-      })
+    const carl = await Customer.findOne({
+      where: {
+        postalAddress: "1234 Cheapcity"
+      },
+      purpose: 'FULFILLMENT'
+    })
 
-      await carl.update({
+    await expectThrowsAsync(() => (
+      carl.update({
         eMail: "carl@email.com"
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    } 
+    ))
   })
 
   it('Successful update with adding new data fields', async () => {

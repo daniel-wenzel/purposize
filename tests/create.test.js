@@ -4,7 +4,7 @@ const { modelName, modelDefinition } = require('./model')
 
 const chai = require('chai')
 const expect = chai.expect
-
+const { expectThrowsAsync } = require("./helpers")
 
 let Customer
 describe('Testing tableDAO.create method', () => {
@@ -16,70 +16,54 @@ describe('Testing tableDAO.create method', () => {
   })
 
   it('Error when creating instance without purpose', async () => {
-    try {
-      await Customer.create({
+    await expectThrowsAsync(() => (
+      Customer.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 
   it('Error when creating instance with incompatible data fields to given purpose', async () => {
-    try {
-      await Customer.create({
+    await expectThrowsAsync(() => (
+      Customer.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       }, {
         purpose: 'NEWSLETTER'
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 
   it('Error when creating instance with unknown purpose', async () => {
-    try {
-      await Customer.create({
+    await expectThrowsAsync(() => (
+      Customer.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       }, {
         purpose: 'TEST'
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 
   it('Error when creating instance with unknown purpose for multiple purposes', async () => {
-    try {
-      await Customer.create({
+    await expectThrowsAsync(() => (
+      Customer.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         unfulfilledOrders: 1
       }, {
         purpose: ['ORDER', 'TEST']
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 
   it('Error when creating instance with multiple purposes and incompatible data fields', async () => {
-    try {
-      await Customer.create({
+    await expectThrowsAsync(() => (
+      Customer.create({
         eMail: "alice@email.com",
         postalAddress: "1234 Shoppington",
         age: 30,
@@ -87,11 +71,7 @@ describe('Testing tableDAO.create method', () => {
       }, {
         purpose: ['FULFILLMENT', 'NEWSLETTER']
       })
-
-      expect.fail(null, null, 'No error was thrown')
-    } catch (error) {
-      expect(error).to.be.instanceOf(Error)
-    }
+    ))
   })
 
   it('Successful creation with all compatible attributes', async () => {
