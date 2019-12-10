@@ -1,0 +1,8 @@
+purposes:
+  - name: PROFILE
+    relevantFields:
+      users:
+        - email
+        - dateOfBirth
+        - gender
+        - phoneNumber
