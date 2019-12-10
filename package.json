@@ -5,7 +5,8 @@
   "main": "purposize/index.js",
   "scripts": {
     "test": "mocha tests/*.test.js --watch --timeout 10000",
-    "dev": "nodemon testApplication.js"
+    "dev": "nodemon testApplication.js",
+    "bench": "nodemon benchmark/index.js"
   },
   "repository": {
     "type": "git",

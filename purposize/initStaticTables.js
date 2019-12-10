@@ -1,5 +1,6 @@
-const purposizeTablePrefix = "purposize_"
 const Sequelize = require("sequelize")
+
+const purposizeTablePrefix = "purposize_"
 
 module.exports = (sequelize) => {
   const tables = {}
@@ -10,11 +11,11 @@ module.exports = (sequelize) => {
     },
     retentionPeriod: {
       type: Sequelize.INTEGER,
-      defaultValue: -1
+      defaultValue: -1,
     },
     loggingLevel: {
       type: Sequelize.STRING,
-      defaultValue: 'NONE'
+      defaultValue: 'NONE',
     }
   }, {
     getterMethods: {
@@ -41,39 +42,47 @@ module.exports = (sequelize) => {
   tables.purposes.belongsToMany(tables.purposes, {
     as: "CompatiblePurposes",
     through: tables.compatiblePurposes,
-    foreignKey: "originalPurpose",
-    otherKey: "compatiblePurpose"
+    foreignKey: "original_purpose",
+    otherKey: "compatible_purpose"
   })
 
 
   tables.personalDataFields = sequelize.define(purposizeTablePrefix + 'personalDataFields', {
-    tableName: {
-      type: Sequelize.STRING,
-      primaryKey: true
-    },
     fieldName: {
       type: Sequelize.STRING,
-      primaryKey: true
-    }
+    },
+    tableName: {
+      type: Sequelize.STRING,
+    },
   }, { 
     tableName: purposizeTablePrefix + "personal_data_fields"
   })
 
   tables.purposeDataFields = sequelize.define(purposizeTablePrefix + 'purposeDataFields', {
-    purpose: {
-      type: Sequelize.STRING,
-      primaryKey: true
-    },
     tableName: {
       type: Sequelize.STRING,
-      primaryKey: true
     },
     fieldName: {
       type: Sequelize.STRING,
-      primaryKey: true
     },
   }, { 
     tableName: purposizeTablePrefix + "purpose_data_fields"
+  })
+
+  
+  
+  tables.purposeDataFields.belongsTo(tables.personalDataFields, {
+    foreignKey: "personalDataFieldId",
+  })
+  tables.personalDataFields.hasMany(tables.purposeDataFields, {
+    foreignKey: "personalDataFieldId",
+  })
+
+  tables.purposeDataFields.belongsTo(tables.purposes, {
+    foreignKey: "purpose",
+  })
+  tables.purposes.hasMany(tables.purposeDataFields, {
+    foreignKey: "purpose",
   })
 
   return tables

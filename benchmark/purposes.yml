@@ -6,3 +6,7 @@ purposes:
         - dateOfBirth
         - gender
         - phoneNumber
+        - name
+  - name: TEST
+    compatibleWith: 
+      - PROFILE

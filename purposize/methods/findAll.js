@@ -12,10 +12,20 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   const userQuery = originalArgs['0'] || {}
   const purposeName = userQuery.purpose
 
+  const personalDataFields = await purposizeTables.purposeDataFields.findAll({
+    where: {
+      tableName: tableDAO.tableName,
+      personalDataFieldId: {
+        [Op.ne]: null
+      }
+    },
+    include: [purposizeTables.personalDataFields, purposizeTables.purposes]
+  })
+
   // Check purpose validity if given
   let purposeInstance
   if (typeof purposeName === 'string') {
-    purposeInstance = await purposizeTables.purposes.findOne({ where: { purpose: purposeName }})
+    purposeInstance = personalDataFields.find(f => f.purpose === purposeName).purposize_purpose
     if (purposeInstance === null) {
       return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
     }
@@ -25,20 +35,13 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   }
 
   // Step 1: Get a list of all attributes which can be accessed for purpose itself
-  const allPersonalDataFields = await purposizeTables.personalDataFields.findAll({ where: {
-    tableName: tableDAO.tableName
-  }}).map( r => r.fieldName )
+  const allPersonalDataFields = personalDataFields.map( r => r.fieldName )
 
   const nonPersonalDataFields = Object.keys(tableDAO.tableAttributes).filter(f => !allPersonalDataFields.includes(f))
 
   let allowedPersonalDataFields = []
   if (typeof purposeName === 'string') {
-    allowedPersonalDataFields = await purposizeTables.purposeDataFields.findAll({
-      where: {
-        purpose: purposeName,
-        tableName: tableDAO.tableName
-      }
-    }).map( r => r.fieldName )
+    allowedPersonalDataFields = personalDataFields.filter(f => f.purpose === purposeName).map(f => f.fieldName)
   }
   const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
 

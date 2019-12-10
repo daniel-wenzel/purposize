@@ -15,15 +15,25 @@ const start = async () => {
     await purposize.loadPurposes(__dirname + "\\purposes.yml")
   }
 
+  await User.create({
+    name: "Max Mustermann",
+    email: "max.mustermann@gmail.com",
+    dateOfBirth: "02.02.1995",
+    gender: "Apache Helicopter",
+    phoneNumber: "0172133769420",
+  }, {
+    purpose: "PROFILE"
+  })
+
   const accessTimes = []
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 1000; i++) {
     const a = new Date()
-    await User.findOne({
+    const res = await User.findOne({
       where: {
         id: 1,
       },
       // attributes: ["gender"],
-      // purpose: "PROFILE",
+      purpose: "PROFILE",
     })
     const b = new Date()
     // console.log(b.getTime() - a.getTime())
