@@ -1,3 +1,5 @@
+require("dotenv").config({ path: __dirname + "\\.env"})
+
 const sequelize = require('./sequelize')
 
 const purposize = require('../purposize')
@@ -26,7 +28,8 @@ const start = async () => {
   })
 
   const accessTimes = []
-  for (let i = 0; i < 1000; i++) {
+  const nIterations = parseFloat(process.env.N_ITERATIONS)
+  for (let i = 0; i < nIterations; i++) {
     const a = new Date()
     const res = await User.findOne({
       where: {
