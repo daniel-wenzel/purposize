@@ -72,7 +72,6 @@ async function loadPurposes(path) {
   const purposeCollection = {}
   const purposeDataFieldCollection = []
 
-  const personalDataFields = await purposizeTables.personalDataFields.findAll()
   for (let purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
     await purposizeTables.purposes.upsert({
@@ -91,9 +90,6 @@ async function loadPurposes(path) {
     for (const tableName in purpose.relevantFields) {
       for (const attribute of purpose.relevantFields[tableName]) {
         // console.log(`Storing ${tableName}(${attribute}) for ${purpose.name} in PurposeDataFieldTable`)
-        const personalDataField = personalDataFields.find(x => {
-          return x.fieldName === attribute && x.tableName === tableName
-        })
         await purposizeTables.purposeDataFields.upsert({
           purpose: purpose.name,
           tableName: tableName,

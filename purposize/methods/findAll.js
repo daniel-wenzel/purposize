@@ -15,7 +15,7 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   const personalDataFields = await purposizeTables.purposeDataFields.findAll({
     where: {
       tableName: tableDAO.tableName,
-      personalDataFieldId: {
+      fieldName: {
         [Op.ne]: null
       }
     },
