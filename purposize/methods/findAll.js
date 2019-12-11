@@ -15,11 +15,17 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   const personalDataFields = await purposizeTables.purposeDataFields.findAll({
     where: {
       tableName: tableDAO.tableName,
-      fieldName: {
-        [Op.ne]: null
-      }
     },
-    include: [purposizeTables.personalDataFields, purposizeTables.purposes]
+    include: [{
+      model: purposizeTables.personalDataFields,
+      where: {
+        fieldName: {
+          [Op.col]: 'purposize_purposeDataFields.fieldName'
+        }
+      }
+    }, {
+      model: purposizeTables.purposes
+    }]
   })
 
   // Check purpose validity if given
