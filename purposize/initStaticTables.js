@@ -1,8 +1,10 @@
 const Sequelize = require("sequelize")
 
+const cache = require("./cache")
+
 const purposizeTablePrefix = "purposize_"
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, options) => {
   const tables = {}
   tables.purposes = sequelize.define(purposizeTablePrefix + 'purposes', {
     purpose: {
@@ -21,14 +23,31 @@ module.exports = (sequelize) => {
     getterMethods: {
       async transitiveCompatiblePurposes() {
         const allCompatiblePurposes = []
-        let uncheckedPurposes = [this]
-        while (uncheckedPurposes.length > 0) {
-          const nextPurpose = uncheckedPurposes.splice(0,1)[0]
-          // continue if the purpose is already in our list
-          if (allCompatiblePurposes.find(p => p.purpose == nextPurpose.purpose)) continue
-          allCompatiblePurposes.push(nextPurpose)
-          uncheckedPurposes = uncheckedPurposes.concat(await nextPurpose.getCompatiblePurposes())
+
+        if (options.cache) {
+          const compatiblePurposes = cache.get("compatiblePurposes")
+          let uncheckedPurposes = [this.purpose]
+          while (uncheckedPurposes.length > 0) {
+            const nextPurpose = uncheckedPurposes.pop()
+            // continue if the purpose is already in our list
+            if (allCompatiblePurposes.includes(p => p == nextPurpose)) continue
+            allCompatiblePurposes.push(nextPurpose)
+
+            if (compatiblePurposes[nextPurpose]) {
+              uncheckedPurposes = uncheckedPurposes.concat(compatiblePurposes[nextPurpose])
+            }
+          }
+        } else {
+          let uncheckedPurposes = [this]
+          while (uncheckedPurposes.length > 0) {
+            const nextPurpose = uncheckedPurposes.pop()
+            // continue if the purpose is already in our list
+            if (allCompatiblePurposes.find(p => p == nextPurpose.purpose)) continue
+            allCompatiblePurposes.push(nextPurpose.purpose)
+            uncheckedPurposes = uncheckedPurposes.concat(await nextPurpose.getCompatiblePurposes())
+          }
         }
+        
         return allCompatiblePurposes
       }
     }

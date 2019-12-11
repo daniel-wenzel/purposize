@@ -14,6 +14,7 @@ const defaultOptions = {
   deletionCheckInterval: 6*60*60*1000,
   logging: true,
   logFunction: console.log,
+  cache: true
 }
 
 // Validates given options
@@ -28,7 +29,7 @@ function validateOptions(options) {
 
   const l = options.logging
   if (l && typeof l !== 'boolean') {
-    console.error(logConfig, `Invalid option: loggin must be a boolean. Default value (${defaultOptions.logging}) was used.`)
+    console.error(logConfig, `Invalid option: logging must be a boolean. Default value (${defaultOptions.logging}) was used.`)
     options.logging = defaultOptions.logging
   }
 
@@ -37,14 +38,21 @@ function validateOptions(options) {
     console.error(logConfig, `Invalid option: logFunction must be a function. Default function (console.log) was used.`)
     options.logFunction = defaultOptions.logFunction
   }
+
+  const c = options.cache
+  if (c && typeof c !== 'boolean') {
+    console.error(logConfig, `Invalid option: cache must be a boolean. Default value (${defaultOptions.logging}) was used.`)
+    options.logging = defaultOptions.logging
+  }
   return options
 }
 
-function init(sequelize, options = defaultOptions) {
-  options = Object.assign({ ...defaultOptions }, validateOptions(options))
+let options = {}
+function init(sequelize, userOptions = defaultOptions) {
+  options = Object.assign({ ...defaultOptions }, validateOptions(userOptions))
   // console.log('Initializing purposize...')
   // console.log('Adding static tables...')
-  const tables = initStaticTables(sequelize)
+  const tables = initStaticTables(sequelize, options)
   // console.log('Done!')
   Object.assign(purposizeTables, tables)
   // console.log(purposizeTables)
@@ -104,7 +112,10 @@ async function loadPurposes(path) {
     compatiblePurposes[purposeInfo.name] = purposeInfo.compatibleWith
   }
 
-  cache.set("compatiblePurposes", compatiblePurposes)
+  if (options.cache) {
+    cache.set("compatiblePurposes", compatiblePurposes)
+  }
+  
   // console.log('Successfully loaded purposes!')
 }
 

@@ -123,26 +123,13 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
 
   // Step 4: Add list of compatible purposes to where clause
   if (typeof purposeName === 'string') {
-    const compatiblePurposes = cache.get("compatiblePurposes")
-    const allCompatiblePurposes = []
-    let uncheckedPurposes = [purposeName]
-    while (uncheckedPurposes.length > 0) {
-      const nextPurpose = uncheckedPurposes.pop()
-      // continue if the purpose is already in our list
-      if (allCompatiblePurposes.includes(p => p == nextPurpose)) continue
-      allCompatiblePurposes.push(nextPurpose)
-
-      if (compatiblePurposes[nextPurpose]) {
-        uncheckedPurposes = uncheckedPurposes.concat(compatiblePurposes[nextPurpose])
-      }
-    }
-
+    const allPossiblePurposes = await purposeInstance.transitiveCompatiblePurposes
     userQuery.include = userQuery.include || []
     userQuery.include.push({
       model: metaDataPurposeTable,
       where: {
         purpose: {
-          [Op.or]: allCompatiblePurposes
+          [Op.or]: allPossiblePurposes
         }
       },
       as: 'attachedPurposes',
