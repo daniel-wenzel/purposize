@@ -2,6 +2,7 @@ const sequelize = require('sequelize')
 const Op = sequelize.Op
 
 const log = require('../log')
+const cache = require("../cache")
 
 module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPurposeTable, purposizeTables, options) {
   // 1. Get a list of all attributes which can be accessed for purpose itself
@@ -12,37 +13,37 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   const userQuery = originalArgs['0'] || {}
   const purposeName = userQuery.purpose
 
-  const personalDataFields = await purposizeTables.purposeDataFields.findAll({
-    where: {
-      tableName: tableDAO.tableName,
-      personalDataFieldId: {
-        [Op.ne]: null
-      }
-    },
-    include: [purposizeTables.personalDataFields, purposizeTables.purposes]
+  const personalDataFields = cache.get("personalDataFields")
+  const purposeDataFieldCollection = cache.get("purposeDataFields")
+  // Filter to circumvent possile mistakes in yaml file
+  const purposeDataFields = purposeDataFieldCollection.filter(f => {
+    return personalDataFields.some(pf => {
+      return pf.fieldName === f.fieldName && pf.tableName === f.tableName
+    })
   })
+  
+  // return await originalFind.apply(tableDAO, originalArgs)
 
+  // console.log(personalDataFields.map(f => f.dataValues))
   // Check purpose validity if given
-  let purposeInstance
   if (typeof purposeName === 'string') {
-    purposeInstance = personalDataFields.find(f => f.purpose === purposeName)
-    if (purposeInstance === undefined) {
+    const isLegitPurpose = purposeDataFields.some(f => f.purpose === purposeName)
+    if (!isLegitPurpose) {
       return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
-    }
-    purposeInstance = purposeInstance.purposize_purpose
+    } 
   } else if (purposeName !== undefined) {
     // This only executes if purposeName is anything except string or undefined
     return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
   }
 
   // Step 1: Get a list of all attributes which can be accessed for purpose itself
-  const allPersonalDataFields = personalDataFields.map( r => r.fieldName )
+  const allPersonalDataFields = purposeDataFields.map( r => r.fieldName )
 
   const nonPersonalDataFields = Object.keys(tableDAO.tableAttributes).filter(f => !allPersonalDataFields.includes(f))
 
   let allowedPersonalDataFields = []
   if (typeof purposeName === 'string') {
-    allowedPersonalDataFields = personalDataFields.filter(f => f.purpose === purposeName).map(f => f.fieldName)
+    allowedPersonalDataFields = purposeDataFields.filter(f => f.purpose === purposeName).map(f => f.fieldName)
   }
   const allAllowedFields = nonPersonalDataFields.concat(allowedPersonalDataFields)
 
@@ -122,7 +123,8 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
 
   // Step 4: Add list of compatible purposes to where clause
   if (typeof purposeName === 'string') {
-    const allPossiblePurposes = await purposeInstance.transitiveCompatiblePurposes
+    const allPossiblePurposes = cache.getCompatiblePurposes(purposeName)
+
     userQuery.include = userQuery.include || []
     userQuery.include.push({
       model: metaDataPurposeTable,
@@ -138,15 +140,19 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
 
   const tableEntries = await originalFind.apply(tableDAO, originalArgs)
 
-  const loggingTriggers = ['ACCESS', 'ALL']
-  if (
-    typeof purposeName === 'string' &&
-    tableEntries !== null &&
-    loggingTriggers.includes(purposeInstance.loggingLevel) &&
-    options.logging
-  ) {
-    log(tableEntries, purposeName, 'findAll', options.logFunction)
+  if (typeof purposeName === "string") {
+    const loggingTriggers = ['ACCESS', 'ALL']
+    const { loggingLevel } = cache.get("purposes")[purposeName]
+    if (
+      typeof purposeName === 'string' &&
+      tableEntries !== null &&
+      loggingTriggers.includes(loggingLevel) &&
+      options.logging
+    ) {
+      log(tableEntries, purposeName, 'findAll', options.logFunction)
+    }
   }
+  
 
   return tableEntries
 }

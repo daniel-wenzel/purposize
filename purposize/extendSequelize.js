@@ -12,6 +12,6 @@ module.exports = (sequelize, purposizeTables, options) => {
   
   sequelize.sync = async function() {
     await originalSync.apply(this, arguments)
-    await personalDataStorage.flushToDB(purposizeTables.personalDataFields)
+    await personalDataStorage.flushToDB(purposizeTables.personalDataFields, options)
   }
 }

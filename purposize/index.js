@@ -69,14 +69,23 @@ async function loadPurposes(path) {
   const readFile = util.promisify(fs.readFile)
   const purposes = yaml.safeLoad(await readFile(path, 'utf8')).purposes
 
+  const purposeCollection = {}
+  const purposeDataFieldCollection = []
+
   const personalDataFields = await purposizeTables.personalDataFields.findAll()
   for (let purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
-    const purposeInstance = await purposizeTables.purposes.create({
+    await purposizeTables.purposes.create({
       purpose: purpose.name,
       retentionPeriod: purpose.retentionPeriod,
       loggingLevel: purpose.loggingLevel
     })
+
+    purposeCollection[purpose.name] = {
+      purpose: purpose.name,
+      retentionPeriod: purpose.retentionPeriod,
+      loggingLevel: purpose.loggingLevel
+    }
 
 
     for (const tableName in purpose.relevantFields) {
@@ -85,12 +94,19 @@ async function loadPurposes(path) {
         const personalDataField = personalDataFields.find(x => {
           return x.fieldName === attribute && x.tableName === tableName
         })
-        await purposizeTables.purposeDataFields.create({
-          purpose: purposeInstance.purpose,
+        await purposizeTables.purposeDataFields.upsert({
+          purpose: purpose.name,
           tableName: tableName,
           fieldName: attribute,
           personalDataFieldId: personalDataField ? personalDataField.id : null,
         })
+        
+        purposeDataFieldCollection.push({
+          purpose: purpose.name,
+          tableName: tableName,
+          fieldName: attribute,
+        })
+
       }
     }
   }
@@ -109,11 +125,14 @@ async function loadPurposes(path) {
     })
     purposeObj.setCompatiblePurposes(purposeInfo.compatibleWith)
     await purposeObj.save()
+
     compatiblePurposes[purposeInfo.name] = purposeInfo.compatibleWith
   }
 
   if (options.cache) {
     cache.set("compatiblePurposes", compatiblePurposes)
+    cache.set("purposes", purposeCollection)
+    cache.set("purposeDataFields", purposeDataFieldCollection)
   }
   
   // console.log('Successfully loaded purposes!')
