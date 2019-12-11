@@ -29,6 +29,7 @@
   "homepage": "https://github.com/daniel-wenzel/purposize#readme",
   "dependencies": {
     "js-yaml": "^3.12.0",
+    "node-cache": "^5.1.0",
     "sequelize": "^5.21.2"
   },
   "devDependencies": {

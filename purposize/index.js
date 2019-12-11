@@ -4,6 +4,7 @@ const util = require('util');
 
 const initStaticTables = require("./initStaticTables.js")
 const extendSequelize = require("./extendSequelize.js")
+const cache = require("./cache")
 
 const purposizeTables = {
   metaDataTables: {}
@@ -85,6 +86,8 @@ async function loadPurposes(path) {
       }
     }
   }
+
+  const compatiblePurposes = {}
   // Set compatible relations. We do this in a second run to make sure all purposes exist in the db
   for (let purposeInfo of purposes) {
     // if we have no compatible purposes, we dont have to add any
@@ -98,7 +101,10 @@ async function loadPurposes(path) {
     })
     purposeObj.setCompatiblePurposes(purposeInfo.compatibleWith)
     await purposeObj.save()
+    compatiblePurposes[purposeInfo.name] = purposeInfo.compatibleWith
   }
+
+  cache.set("compatiblePurposes", compatiblePurposes)
   // console.log('Successfully loaded purposes!')
 }
 
