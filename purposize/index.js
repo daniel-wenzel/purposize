@@ -98,7 +98,6 @@ async function loadPurposes(path) {
           purpose: purpose.name,
           tableName: tableName,
           fieldName: attribute,
-          personalDataFieldId: personalDataField ? personalDataField.fieldName : null,
         })
         
         purposeDataFieldCollection.push({
