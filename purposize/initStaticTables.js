@@ -1,10 +1,8 @@
 const Sequelize = require("sequelize")
 
-const cache = require("./cache")
-
 const purposizeTablePrefix = "purposize_"
 
-module.exports = (sequelize, options) => {
+module.exports = (sequelize) => {
   const tables = {}
   tables.purposes = sequelize.define(purposizeTablePrefix + 'purposes', {
     purpose: {
@@ -52,9 +50,11 @@ module.exports = (sequelize, options) => {
   tables.personalDataFields = sequelize.define(purposizeTablePrefix + 'personalDataFields', {
     fieldName: {
       type: Sequelize.STRING,
+      primaryKey: true
     },
     tableName: {
       type: Sequelize.STRING,
+      primaryKey: true
     },
   }, { 
     tableName: purposizeTablePrefix + "personal_data_fields"
@@ -63,10 +63,16 @@ module.exports = (sequelize, options) => {
   tables.purposeDataFields = sequelize.define(purposizeTablePrefix + 'purposeDataFields', {
     tableName: {
       type: Sequelize.STRING,
+      primaryKey: true
     },
     fieldName: {
       type: Sequelize.STRING,
+      primaryKey: true
     },
+    purpose: {
+      type: Sequelize.STRING,
+      primaryKey: true
+    }
   }, { 
     tableName: purposizeTablePrefix + "purpose_data_fields"
   })
@@ -74,10 +80,12 @@ module.exports = (sequelize, options) => {
   
   
   tables.purposeDataFields.belongsTo(tables.personalDataFields, {
-    foreignKey: "personalDataFieldId",
+    foreignKey: "fieldName",
+    targetKey: "fieldName"
   })
   tables.personalDataFields.hasMany(tables.purposeDataFields, {
-    foreignKey: "personalDataFieldId",
+    foreignKey: "fieldName",
+    sourceKey: "fieldName"
   })
 
   tables.purposeDataFields.belongsTo(tables.purposes, {

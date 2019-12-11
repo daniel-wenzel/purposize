@@ -11,7 +11,8 @@ const sequelize = new Sequelize('testdb', 'postgres', 'admin', {
 })
 
 purposize.init(sequelize, {
-  logging: false
+  logging: false,
+  cache: true
 })
 
 module.exports = sequelize

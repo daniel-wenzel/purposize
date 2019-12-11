@@ -52,7 +52,7 @@ function init(sequelize, userOptions = defaultOptions) {
   options = Object.assign({ ...defaultOptions }, validateOptions(userOptions))
   // console.log('Initializing purposize...')
   // console.log('Adding static tables...')
-  const tables = initStaticTables(sequelize, options)
+  const tables = initStaticTables(sequelize)
   // console.log('Done!')
   Object.assign(purposizeTables, tables)
   // console.log(purposizeTables)
@@ -75,7 +75,7 @@ async function loadPurposes(path) {
   const personalDataFields = await purposizeTables.personalDataFields.findAll()
   for (let purpose of purposes) {
     // console.log(`Storing ${purpose.name} purpose information to PurposeTable`)
-    await purposizeTables.purposes.create({
+    await purposizeTables.purposes.upsert({
       purpose: purpose.name,
       retentionPeriod: purpose.retentionPeriod,
       loggingLevel: purpose.loggingLevel
@@ -98,7 +98,7 @@ async function loadPurposes(path) {
           purpose: purpose.name,
           tableName: tableName,
           fieldName: attribute,
-          personalDataFieldId: personalDataField ? personalDataField.id : null,
+          personalDataFieldId: personalDataField ? personalDataField.fieldName : null,
         })
         
         purposeDataFieldCollection.push({

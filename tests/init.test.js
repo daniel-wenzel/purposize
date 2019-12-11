@@ -22,4 +22,14 @@ describe('Test purposize initialization', () => {
     expect(sequelize.isDefined('purposize_purposes')).to.equal(true)
     expect(sequelize.isDefined('purposize_compatiblePurposes')).to.equal(true)
   })
+
+  it("Loading purposes twice should not lead to double entries in tables", async () => {
+    await sequelize.sync()
+    
+    await purposize.loadPurposes(__dirname + "\\purposes.yml")
+    await purposize.loadPurposes(__dirname + "\\purposes.yml")
+
+    const res = await sequelize.model("purposize_purposeDataFields").findAll()
+    expect(res.length).to.be.equal(8)
+  })
 })
