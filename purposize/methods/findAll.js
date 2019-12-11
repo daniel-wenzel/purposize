@@ -25,10 +25,11 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // Check purpose validity if given
   let purposeInstance
   if (typeof purposeName === 'string') {
-    purposeInstance = personalDataFields.find(f => f.purpose === purposeName).purposize_purpose
-    if (purposeInstance === null) {
+    purposeInstance = personalDataFields.find(f => f.purpose === purposeName)
+    if (purposeInstance === undefined) {
       return sequelize.Promise.reject(new Error('Unknown purpose: ' + purposeName))
     }
+    purposeInstance = purposeInstance.purposize_purpose
   } else if (purposeName !== undefined) {
     // This only executes if purposeName is anything except string or undefined
     return sequelize.Promise.reject(new Error("Incorrect purpose format!"))
