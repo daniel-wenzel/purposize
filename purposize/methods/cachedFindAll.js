@@ -18,13 +18,10 @@ module.exports = async function(originalArgs, originalFind, tableDAO, metaDataPu
   // Filter to circumvent possile mistakes in yaml file
   const purposeDataFields = purposeDataFieldCollection.filter(f => {
     return personalDataFields.some(pf => {
-      return pf.fieldName === f.fieldName && pf.tableName === f.tableName
+      return f.tableName === tableDAO.tableName && f.fieldName === pf.fieldName
     })
   })
   
-  // return await originalFind.apply(tableDAO, originalArgs)
-
-  // console.log(personalDataFields.map(f => f.dataValues))
   // Check purpose validity if given
   if (typeof purposeName === 'string') {
     const isLegitPurpose = purposeDataFields.some(f => f.purpose === purposeName)
